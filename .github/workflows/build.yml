@@ -1,0 +1,73 @@
+name: Build
+
+on:
+  push:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: macos-10.15
+    env:
+      VCPKG_PACKAGES: >-
+        angle
+        chromaprint
+        fdk-aac
+        ffmpeg
+        fftw3
+        hidapi
+        hss1394
+        libdjinterop
+        libebur128
+        libflac
+        libkeyfinder
+        libmodplug
+        libogg
+        libopusenc
+        libshout
+        libsndfile
+        libusb
+        libvorbis
+        lilv
+        mp3lame
+        opus
+        opusfile
+        portaudio[asio]
+        portmidi
+        protobuf
+        pthreads
+        qt5-base
+        qt5-declarative
+        qt5-macextras
+        qt5-script
+        qt5-svg
+        qt5-translations
+        qtkeychain-qt5
+        rubberband
+        soundtouch
+        taglib
+        wavpack
+      VCPKG_DEFAULT_TRIPLET: arm64-osx-mixxx
+      VCPKG_OVERLAY_TRIPLETS: vcpkg/overlay/triplets
+      VCPKG_OVERLAY_PORTS: vcpkg/overlay/osx:vcpkg/overlay/ports
+    
+    steps:
+    - uses: actions/checkout@v3
+      with:
+        submodules: recursive
+    - name: Bootstrap vcpkg
+      run: vcpkg/bootstrap-vcpkg.sh
+    - name: Set up build environment
+      run: |
+        brew install nasm automake
+        xcrun --show-sdk-version
+    # TODO: Set up cache (actions/cache@v3)
+    - name: Check disk space
+      run: df -h
+    - name: Upgrade packages
+      run: vcpkg/vcpkg upgrade --no-dry-run
+    - name: Build packages
+      run: vcpkg/vcpkg install --clean-after-build --recurse ${{ env.VCPKG_PACKAGES }}
+
+    # TODO: Build Mixxx
+    # TODO: Upload artifacts
+    # TODO: Create GitHub Release (?)
