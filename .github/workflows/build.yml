@@ -78,7 +78,7 @@ jobs:
       if: failure()
       uses: actions/upload-artifact@v3
       with:
-        name: buildlogs
+        name: vcpkg-buildlogs
         path: vcpkg/buildlogs.zip
 
     # TODO: Build Mixxx
