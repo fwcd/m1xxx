@@ -61,6 +61,7 @@ jobs:
       run: |
         for mod in vcpkg mixxx; do
           echo "::set-output name=$mod-version::$(cd $mod && git rev-parse HEAD)"
+          echo "::set-output name=$mod-version-short::$(cd $mod && git rev-parse --short HEAD)"
         done
       shell: bash
     - name: Bootstrap vcpkg
@@ -70,19 +71,26 @@ jobs:
         brew install nasm automake
         /bin/bash -c "sudo xcode-select --switch ${{ env.DEVELOPER_DIR }}"
         xcrun --show-sdk-version
-    # TODO: Set up cache (actions/cache@v3)
+    - name: Set up cache
+      uses: actions/cache@v3
+      with:
+        path: vcpkg/installed
+        key: vcpkg-installed-${{ env.VCPKG_DEFAULT_TRIPLET }}-${{ steps.versions.outputs.vcpkg-version }}-${{ github.ref }}-${{ github.run_number }}
+        restore-keys: |
+          vcpkg-installed-${{ env.VCPKG_DEFAULT_TRIPLET }}-${{ steps.versions.outputs.vcpkg-version }}-${{ github.ref }}-
+          vcpkg-installed-${{ env.VCPKG_DEFAULT_TRIPLET }}-${{ steps.versions.outputs.vcpkg-version }}-
     - name: Check disk space
       run: df -h
-    - name: Upgrade packages
+    - name: Upgrade vcpkg packages
       run: vcpkg/vcpkg upgrade --no-dry-run
-    - name: Build packages
+    - name: Build vcpkg packages
       run: vcpkg/vcpkg install --clean-after-build --recurse ${{ env.VCPKG_PACKAGES }}
-    - name: Zip build logs
-      if: failure()
+    - name: Zip vcpkg build logs
+      if: always()
       run: zip -R buildlogs.zip 'build-*.log' 'install-*.log'
       working-directory: vcpkg
-    - name: Upload build logs
-      if: failure()
+    - name: Upload vcpkg build logs
+      if: always()
       uses: actions/upload-artifact@v3
       with:
         name: vcpkg-buildlogs
