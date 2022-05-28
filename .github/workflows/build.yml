@@ -46,7 +46,7 @@ jobs:
         soundtouch
         taglib
         wavpack
-      VCPKG_DEFAULT_TRIPLET: arm64-osx-mixxx
+      VCPKG_DEFAULT_TRIPLET: arm64-osx
       VCPKG_OVERLAY_TRIPLETS: vcpkg/overlay/triplets
       VCPKG_OVERLAY_PORTS: vcpkg/overlay/osx:vcpkg/overlay/ports
       DEVELOPER_DIR: /Applications/Xcode_12.2.app/Contents/Developer
