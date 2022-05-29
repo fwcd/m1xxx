@@ -69,14 +69,14 @@ jobs:
           echo "::set-output name=$mod-version-short::$(cd $mod && git rev-parse --short HEAD)"
         done
       shell: bash
+    - name: Set up build environment
+      run: |
+        brew install nasm automake ninja
+        /bin/bash -c "sudo xcode-select --switch ${{ env.DEVELOPER_DIR }}"
+        xcrun --show-sdk-version
     # Build dependencies
     - name: Bootstrap vcpkg
       run: vcpkg/bootstrap-vcpkg.sh -disableMetrics
-    - name: Set up build environment
-      run: |
-        brew install nasm automake
-        /bin/bash -c "sudo xcode-select --switch ${{ env.DEVELOPER_DIR }}"
-        xcrun --show-sdk-version
     - name: Set up cache
       uses: actions/cache@v3
       with:
