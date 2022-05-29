@@ -2,6 +2,9 @@ name: Build
 
 on:
   push:
+    # Only run on branches (not tags)
+    branches:
+    - '*'
   workflow_dispatch:
 
 jobs:
@@ -130,4 +133,5 @@ jobs:
         name: mixxx-arm64-macos
         path: mixxx/build/*.dmg
 
-    # TODO: Create GitHub Release (?)
+    # TODO: Fix signing of binary
+    # TODO: Automatically create tag (and GitHub release) with scripts/mixxx-version
