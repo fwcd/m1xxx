@@ -108,8 +108,8 @@ jobs:
         -B build
         ${{ env.CMAKE_OPTIONS }}
         -DCMAKE_TOOLCHAIN_FILE=${{ github.workspace }}/vcpkg/scripts/buildsystems/vcpkg.cmake
-        -DCMAKE_C_COMPILER=$(xcrun -find c)
-        -DCMAKE_CXX_COMPILER=$(xcrun -find cxx)
+        -DCMAKE_C_COMPILER=$(xcrun -find cc)
+        -DCMAKE_CXX_COMPILER=$(xcrun -find c++)
       working-directory: mixxx
     - name: Upload Mixxx configuration logs
       if: always()
