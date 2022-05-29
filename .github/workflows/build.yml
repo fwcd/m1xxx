@@ -8,6 +8,7 @@ jobs:
   build:
     runs-on: macos-10.15
     env:
+      CMAKE_GENERATOR: Ninja
       CMAKE_ARGS: >-
         -DCMAKE_BUILD_TYPE=RelWithDebInfo
         -DMACOS_BUNDLE=ON
@@ -102,7 +103,7 @@ jobs:
           vcpkg/buildtrees/**/install-*.log
     # Build Mixxx
     - name: Configure Mixxx build
-      run: cmake -B build ${{ env.CMAKE_ARGS }}
+      run: cmake -G ${{ env.CMAKE_GENERATOR }} -B build ${{ env.CMAKE_ARGS }}
       working-directory: mixxx
     - name: Upload Mixxx configuration logs
       if: always()
@@ -115,7 +116,7 @@ jobs:
       working-directory: mixxx
     - name: Package Mixxx
       run: cpack -G ${{ env.CPACK_GENERATOR }} -V
-      working-directory: mixxx
+      working-directory: mixxx/build
     - name: Upload packaged Mixxx binaries
       uses: actions/upload-artifact@v3
       with:
