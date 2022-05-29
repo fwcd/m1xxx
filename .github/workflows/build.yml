@@ -8,6 +8,11 @@ jobs:
   build:
     runs-on: macos-10.15
     env:
+      CMAKE_ARGS: >-
+        -DCMAKE_BUILD_TYPE=RelWithDebInfo
+        -DMACOS_BUNDLE=ON
+        -DCMAKE_TOOLCHAIN_FILE=${{ github.workspace }}/vcpkg/scripts/buildsystems/vcpkg.cmake
+      CPACK_GENERATOR: DragNDrop
       VCPKG_PACKAGES: >-
         angle
         chromaprint
@@ -64,6 +69,7 @@ jobs:
           echo "::set-output name=$mod-version-short::$(cd $mod && git rev-parse --short HEAD)"
         done
       shell: bash
+    # Build dependencies
     - name: Bootstrap vcpkg
       run: vcpkg/bootstrap-vcpkg.sh -disableMetrics
     - name: Set up build environment
@@ -75,6 +81,7 @@ jobs:
       uses: actions/cache@v3
       with:
         path: vcpkg/installed
+        # TODO: Include hashed list of installed packages (VCPKG_PACKAGES) in key?
         key: vcpkg-installed-${{ env.VCPKG_DEFAULT_TRIPLET }}-${{ steps.versions.outputs.vcpkg-version }}-${{ github.ref }}-${{ github.run_number }}
         restore-keys: |
           vcpkg-installed-${{ env.VCPKG_DEFAULT_TRIPLET }}-${{ steps.versions.outputs.vcpkg-version }}-${{ github.ref }}-
@@ -90,8 +97,29 @@ jobs:
       uses: actions/upload-artifact@v3
       with:
         name: vcpkg-buildlogs
-        path: vcpkg/buildtrees/**/*.log
+        path: |
+          vcpkg/buildtrees/**/build-*.log
+          vcpkg/buildtrees/**/install-*.log
+    # Build Mixxx
+    - name: Configure Mixxx build
+      run: cmake -B build ${{ env.CMAKE_ARGS }}
+      working-directory: mixxx
+    - name: Upload Mixxx configuration logs
+      if: always()
+      uses: actions/upload-artifact@v3
+      with:
+        name: mixxx-configurelogs
+        path: mixxx/build/CMakeFiles/*.log
+    - name: Build Mixxx
+      run: cmake --build build
+      working-directory: mixxx
+    - name: Package Mixxx
+      run: cpack -G ${{ env.CPACK_GENERATOR }} -V
+      working-directory: mixxx
+    - name: Upload packaged Mixxx binaries
+      uses: actions/upload-artifact@v3
+      with:
+        name: mixxx-arm64-macos
+        with: mixxx/build/*.dmg
 
-    # TODO: Build Mixxx
-    # TODO: Upload artifacts
     # TODO: Create GitHub Release (?)
