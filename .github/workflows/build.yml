@@ -9,10 +9,9 @@ jobs:
     runs-on: macos-10.15
     env:
       CMAKE_GENERATOR: Ninja
-      CMAKE_ARGS: >-
+      CMAKE_OPTIONS: >-
         -DCMAKE_BUILD_TYPE=RelWithDebInfo
         -DMACOS_BUNDLE=ON
-        -DCMAKE_TOOLCHAIN_FILE=${{ github.workspace }}/vcpkg/scripts/buildsystems/vcpkg.cmake
       CPACK_GENERATOR: DragNDrop
       VCPKG_PACKAGES: >-
         angle
@@ -103,11 +102,15 @@ jobs:
           vcpkg/buildtrees/**/install-*.log
     # Build Mixxx
     - name: Configure Mixxx build
-      run: cmake -G ${{ env.CMAKE_GENERATOR }} -B build ${{ env.CMAKE_ARGS }}
+      run: >-
+        cmake
+        -G ${{ env.CMAKE_GENERATOR }}
+        -B build
+        ${{ env.CMAKE_OPTIONS }}
+        -DCMAKE_TOOLCHAIN_FILE=${{ github.workspace }}/vcpkg/scripts/buildsystems/vcpkg.cmake
+        -DCMAKE_C_COMPILER=$(xcrun -find c)
+        -DCMAKE_CXX_COMPILER=$(xcrun -find cxx)
       working-directory: mixxx
-      env:
-        CC: ${{ matrix.cc }}
-        CXX: ${{ matrix.cxx }}
     - name: Upload Mixxx configuration logs
       if: always()
       uses: actions/upload-artifact@v3
@@ -117,9 +120,6 @@ jobs:
     - name: Build Mixxx
       run: cmake --build build
       working-directory: mixxx
-      env:
-        CC: ${{ matrix.cc }}
-        CXX: ${{ matrix.cxx }}
     - name: Package Mixxx
       run: cpack -G ${{ env.CPACK_GENERATOR }} -V
       working-directory: mixxx/build
