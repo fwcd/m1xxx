@@ -85,16 +85,12 @@ jobs:
       run: vcpkg/vcpkg upgrade --no-dry-run
     - name: Build vcpkg packages
       run: vcpkg/vcpkg install --clean-after-build --recurse ${{ env.VCPKG_PACKAGES }}
-    - name: Zip vcpkg build logs
-      if: always()
-      run: zip -R buildlogs.zip 'build-*.log' 'install-*.log'
-      working-directory: vcpkg
     - name: Upload vcpkg build logs
       if: always()
       uses: actions/upload-artifact@v3
       with:
         name: vcpkg-buildlogs
-        path: vcpkg/buildlogs.zip
+        path: vcpkg/buildtrees/**/*.log
 
     # TODO: Build Mixxx
     # TODO: Upload artifacts
