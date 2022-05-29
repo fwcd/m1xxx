@@ -116,6 +116,12 @@ jobs:
           ccache-${{ steps.vars.outputs.mixxx-version }}-${{ github.ref }}-
           ccache-${{ steps.vars.outputs.mixxx-version }}-
           ccache-
+    - name: Patch Mixxx build
+      # We remove the entitlements (enabling App Sandbox) since the app
+      # otherwise will be reported as 'damaged' in the Finder/Gatekeeper
+      # UI without a valid signature. See https://github.com/fwcd/m1xxx/issues/4.
+      run: set -i '' '/set(APPLE_CODESIGN_ENTITLEMENTS/d' CMakeLists.txt
+      working-directory: mixxx
     - name: Configure Mixxx build
       run: >-
         cmake
