@@ -150,6 +150,7 @@ jobs:
       run: |
         version="$(scripts/mixxx-version)"
         tag="v$version"
+        git fetch --tags
         if git rev-parse "$tag" >/dev/null 2>&1; then
           echo "::set-output name=created::false"
         else
