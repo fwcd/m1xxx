@@ -123,31 +123,24 @@ jobs:
         -B build
         -DCMAKE_BUILD_TYPE=RelWithDebInfo
         -DMACOS_BUNDLE=ON
-        -DCMAKE_TOOLCHAIN_FILE=${{ github.workspace }}/vcpkg/scripts/buildsystems/vcpkg.cmake
         -DCMAKE_C_COMPILER=$(xcrun -find cc)
         -DCMAKE_CXX_COMPILER=$(xcrun -find c++)
-        -DCMAKE_OSX_DEPLOYMENT_TARGET="11.0"
-        -DCMAKE_C_FLAGS="-arch arm64 -mmacosx-version-min=11.0"
-        -DCMAKE_CXX_FLAGS="-arch arm64 -mmacosx-version-min=11.0"
         -DAPPLE_CODESIGN_IDENTITY=-
-      working-directory: mixxx
     - name: Upload Mixxx configuration logs
       if: always()
       uses: actions/upload-artifact@v3
       with:
         name: mixxx-configurelogs
-        path: mixxx/build/CMakeFiles/*.log
+        path: build/**/CMakeFiles/*.log
     - name: Build Mixxx
       run: cmake --build build
-      working-directory: mixxx
     - name: Package Mixxx
       run: cpack -G DragNDrop -V
-      working-directory: mixxx/build
+      working-directory: build
     - name: Upload packaged Mixxx binaries
       uses: actions/upload-artifact@v3
       with:
         name: mixxx-arm64-macos
-        path: mixxx/build/*.dmg
+        path: build/**.dmg
 
-    # TODO: Fix signing of binary
     # TODO: Automatically create tag (and GitHub release) with scripts/mixxx-version
