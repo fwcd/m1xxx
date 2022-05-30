@@ -145,6 +145,25 @@ jobs:
       with:
         name: mixxx-arm64-macos
         path: mixxx/build/*.dmg
-
-    # TODO: Fix signing of binary
-    # TODO: Automatically create tag (and GitHub release) with scripts/mixxx-version
+    - name: Create tag
+      id: tag
+      run: |
+        version="$(scripts/mixxx-version)"
+        tag="v$version"
+        if git rev-parse "$tag" >/dev/null 2>&1; then
+          echo "::set-output name=created::false"
+        else
+          git tag -am "Version $version" "$tag"
+          git push origin "$tag"
+          echo "::set-output name=version::$version"
+          echo "::set-output name=tag::$tag"
+          echo "::set-output name=created::true"
+        fi
+      shell: bash
+    - name: Create GitHub release
+      if: ${{ steps.tag.outputs.created == 'true' }}
+      uses: softprops/action-gh-release@v1
+      with:
+        tag_name: ${{ steps.tag.outputs.tag }}
+        name: Version ${{ steps.tag.outputs.version }}
+        files: mixxx/build/*.dmg
