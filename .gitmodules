@@ -4,5 +4,5 @@
 	branch = arm64-osx-mixxx
 [submodule "mixxx"]
 	path = mixxx
-	url = ../mixxx.git
-	branch = arm64-osx-mixxx
+	url = https://github.com/mixxxdj/mixxx.git
+	branch = main
