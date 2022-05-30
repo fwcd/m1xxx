@@ -30,5 +30,7 @@ jobs:
     - name: Update submodule
       run: |
         git add mixxx
-        git commit -m "Update mixxx ($(scripts/mixxx-version))"
-        git push
+        if git diff --quiet HEAD; then
+          git commit -m "Update mixxx ($(scripts/mixxx-version))"
+          git push
+        fi
