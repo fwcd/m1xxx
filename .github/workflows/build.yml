@@ -126,6 +126,7 @@ jobs:
         -DCMAKE_TOOLCHAIN_FILE=${{ github.workspace }}/vcpkg/scripts/buildsystems/vcpkg.cmake
         -DCMAKE_C_COMPILER=$(xcrun -find cc)
         -DCMAKE_CXX_COMPILER=$(xcrun -find c++)
+        -DAPPLE_CODESIGN_IDENTITY=-
       working-directory: mixxx
     - name: Upload Mixxx configuration logs
       if: always()
