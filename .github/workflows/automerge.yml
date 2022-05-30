@@ -20,6 +20,7 @@ jobs:
         git config --global user.email "github-actions[bot]@users.noreply.github.com"
     - name: Pull upstream
       run: |
+        git fetch origin
         git checkout arm64-osx-mixxx
         git remote add upstream https://github.com/mixxxdj/mixxx.git
         git fetch upstream main
