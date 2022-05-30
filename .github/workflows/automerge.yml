@@ -1,0 +1,34 @@
+name: Automerge
+
+on:
+  # Run every day at midnight
+  schedule:
+  - cron: '0 0 * * *'
+  workflow_dispatch:
+
+jobs:
+  automerge:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v3
+      with:
+        submodules: recursive
+    - name: Configure Git user
+      run: |
+        git config --global user.name "github-actions[bot]"
+        git config --global user.email "github-actions[bot]@users.noreply.github.com"
+    - name: Pull upstream
+      run: |
+        git checkout arm64-osx-mixxx
+        git remote add upstream https://github.com/mixxxdj/mixxx.git
+        git fetch upstream main
+        merged_commit=$(git rev-parse --short upstream/main)
+        git merge upstream/main -m "Merge upstream mixxxdj:main (${merged_commit})"
+        git push
+      working-directory: mixxx
+    - name: Update submodule
+      run: |
+        git add mixxx
+        git commit -m "Update mixxx ($(scripts/mixxx-version))"
+        git push
