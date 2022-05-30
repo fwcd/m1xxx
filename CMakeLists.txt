@@ -1,3 +1,6 @@
+cmake_minimum_required(VERSION 3.16)
+project(m1xxx)
+
 set(CMAKE_TOOLCHAIN_FILE ${CMAKE_CURRENT_SOURCE_DIR}/vcpkg/scripts/buildsystems/vcpkg.cmake)
 set(CMAKE_OSX_DEPLOYMENT_TARGET 11.0)
 set(CMAKE_OSX_ARCHITECTURES arm64)
