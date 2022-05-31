@@ -24,7 +24,7 @@ jobs:
         git remote add upstream https://github.com/mixxxdj/mixxx.git
         git fetch upstream main
         merged_commit=$(git rev-parse --short upstream/main)
-        if git diff --quiet upstream/main; then
+        if ! git diff --quiet upstream/main; then
           git merge upstream/main -m "Merge upstream mixxxdj:main (${merged_commit})"
           git push "https://fwcd-ci:${{ secrets.MIXXX_PAT }}@github.com/fwcd/mixxx.git" arm64-osx-mixxx
         fi
@@ -32,7 +32,7 @@ jobs:
     - name: Update submodule
       run: |
         git add mixxx
-        if git diff --quiet HEAD; then
+        if ! git diff --quiet HEAD; then
           git commit -m "Update mixxx ($(scripts/mixxx-version))"
           git push
         fi
