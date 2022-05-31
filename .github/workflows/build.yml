@@ -110,7 +110,8 @@ jobs:
 
     - name: Export vcpkg archive
       run: >-
-        vcpkg/vcpkg ${{ env.VCPKG_PACKAGES }}
+        vcpkg/vcpkg export
+        ${{ env.VCPKG_PACKAGES }}
         --zip
         --output="${{ env.DEPS_BASE_NAME }}-${{ steps.vars.outputs.vcpkg-commit-short }}"
     - name: Upload vcpkg archive
