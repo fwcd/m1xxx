@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 
+import argparse
 import pathlib
 import re
 import subprocess
@@ -9,23 +10,29 @@ MIXXX_DIR = ROOT_DIR / 'mixxx'
 CMAKELISTS_PATH = MIXXX_DIR / 'CMakeLists.txt'
 
 def main():
+    parser = argparse.ArgumentParser(description='Fetches the Mixxx version')
+    parser.add_argument('-s', '--short', action='store_true', help='Only fetch the version number.')
+
+    args = parser.parse_args()
     parts = []
 
     # Read actual version
     with open(CMAKELISTS_PATH, 'r') as f:
         for line in f.readlines():
             version = re.search(r'^\s*project\(.+VERSION\s+(.+)\)\s*$', line)
-            prerelease = re.search(r'^\s*set\(MIXXX_VERSION_PRERELEASE\s+"(.+)"\)', line)
             if version:
                 parts.append(version[1])
-            if prerelease:
-                parts.append(prerelease[1])
+            if not args.short:
+                prerelease = re.search(r'^\s*set\(MIXXX_VERSION_PRERELEASE\s+"(.+)"\)', line)
+                if prerelease:
+                    parts.append(prerelease[1])
     
     # Read Git version
-    git_output = subprocess.run(['git', 'rev-parse', '--short', 'HEAD'], cwd=MIXXX_DIR, capture_output=True)
-    git_version = git_output.stdout.decode('utf-8')
-    if git_version:
-        parts.append(git_version)
+    if not args.short:
+        git_output = subprocess.run(['git', 'rev-parse', '--short', 'HEAD'], cwd=MIXXX_DIR, capture_output=True)
+        git_version = git_output.stdout.decode('utf-8')
+        if git_version:
+            parts.append(git_version)
 
     print('-'.join(parts))
 
