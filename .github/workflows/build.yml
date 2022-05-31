@@ -126,6 +126,9 @@ jobs:
         -DCMAKE_TOOLCHAIN_FILE=${{ github.workspace }}/vcpkg/scripts/buildsystems/vcpkg.cmake
         -DCMAKE_C_COMPILER=$(xcrun -find cc)
         -DCMAKE_CXX_COMPILER=$(xcrun -find c++)
+        -DCMAKE_OSX_DEPLOYMENT_TARGET="11.0"
+        -DCMAKE_C_FLAGS="-arch arm64 -mmacosx-version-min=11.0"
+        -DCMAKE_CXX_FLAGS="-arch arm64 -mmacosx-version-min=11.0"
         -DAPPLE_CODESIGN_IDENTITY=-
       working-directory: mixxx
     - name: Upload Mixxx configuration logs
