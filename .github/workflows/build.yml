@@ -11,6 +11,8 @@ jobs:
   build:
     runs-on: macos-10.15
     env:
+      DEPS_BASE_NAME: mixxx-deps-arm64-macos
+      DMG_BASE_NAME: mixxx-arm64-macos
       VCPKG_PACKAGES: >-
         angle
         chromaprint
@@ -64,9 +66,10 @@ jobs:
       id: vars
       run: |
         for mod in vcpkg mixxx; do
-          echo "::set-output name=$mod-version::$(cd $mod && git rev-parse HEAD)"
-          echo "::set-output name=$mod-version-short::$(cd $mod && git rev-parse --short HEAD)"
+          echo "::set-output name=$mod-commit::$(cd $mod && git rev-parse HEAD)"
+          echo "::set-output name=$mod-commit-short::$(cd $mod && git rev-parse --short HEAD)"
         done
+        echo "::set-output name=mixxx-version::$(scripts/mixxx-version)"
         echo "::set-output name=home::$HOME"
       shell: bash
     - name: Set up build environment
@@ -84,10 +87,10 @@ jobs:
       with:
         path: vcpkg/installed
         # TODO: Include hashed list of installed packages (VCPKG_PACKAGES) in key?
-        key: vcpkg-installed-${{ env.VCPKG_DEFAULT_TRIPLET }}-${{ steps.vars.outputs.vcpkg-version }}-${{ github.ref }}-${{ github.run_number }}
+        key: vcpkg-installed-${{ env.VCPKG_DEFAULT_TRIPLET }}-${{ steps.vars.outputs.vcpkg-commit }}-${{ github.ref }}-${{ github.run_number }}
         restore-keys: |
-          vcpkg-installed-${{ env.VCPKG_DEFAULT_TRIPLET }}-${{ steps.vars.outputs.vcpkg-version }}-${{ github.ref }}-
-          vcpkg-installed-${{ env.VCPKG_DEFAULT_TRIPLET }}-${{ steps.vars.outputs.vcpkg-version }}-
+          vcpkg-installed-${{ env.VCPKG_DEFAULT_TRIPLET }}-${{ steps.vars.outputs.vcpkg-commit }}-${{ github.ref }}-
+          vcpkg-installed-${{ env.VCPKG_DEFAULT_TRIPLET }}-${{ steps.vars.outputs.vcpkg-commit }}-
     - name: Check disk space
       run: df -h
     - name: Upgrade vcpkg packages
@@ -102,6 +105,19 @@ jobs:
         path: |
           vcpkg/buildtrees/**/build-*.log
           vcpkg/buildtrees/**/install-*.log
+    
+    # Export dependency archive to artifacts
+
+    - name: Export vcpkg archive
+      run: >-
+        vcpkg/vcpkg ${{ env.VCPKG_PACKAGES }}
+        --zip
+        --output="${{ env.DEPS_BASE_NAME }}-${{ steps.vars.outputs.vcpkg-commit-short }}"
+    - name: Upload vcpkg archive
+      uses: actions/upload-artifact@v3
+      with:
+        name: ${{ env.DEPS_BASE_NAME }}-${{ steps.vars.outputs.vcpkg-commit-short }}
+        path: vcpkg/${{ env.DEPS_BASE_NAME }}-${{ steps.vars.outputs.vcpkg-commit-short }}.zip
 
     # Build Mixxx
 
@@ -111,10 +127,10 @@ jobs:
       uses: actions/cache@v3
       with:
         path: ${{ steps.vars.outputs.home }}/Library/Caches/ccache
-        key: ccache-${{ steps.vars.outputs.mixxx-version }}-${{ github.ref }}-${{ github.run_number }}
+        key: ccache-${{ steps.vars.outputs.mixxx-commit }}-${{ github.ref }}-${{ github.run_number }}
         restore-keys: |
-          ccache-${{ steps.vars.outputs.mixxx-version }}-${{ github.ref }}-
-          ccache-${{ steps.vars.outputs.mixxx-version }}-
+          ccache-${{ steps.vars.outputs.mixxx-commit }}-${{ github.ref }}-
+          ccache-${{ steps.vars.outputs.mixxx-commit }}-
           ccache-
     - name: Configure Mixxx build
       run: >-
@@ -143,12 +159,12 @@ jobs:
     - name: Upload packaged Mixxx binaries
       uses: actions/upload-artifact@v3
       with:
-        name: mixxx-arm64-macos
+        name: ${{ env.DMG_BASE_NAME }}
         path: mixxx/build/*.dmg
     - name: Create tag
       id: tag
       run: |
-        version="$(scripts/mixxx-version)"
+        version="${{ steps.vars.outputs.mixxx-version }}"
         tag="v$version"
         git fetch --tags
         if git rev-parse "$tag" >/dev/null 2>&1; then
@@ -156,7 +172,6 @@ jobs:
         else
           git tag -am "Version $version" "$tag"
           git push origin "$tag"
-          echo "::set-output name=version::$version"
           echo "::set-output name=tag::$tag"
           echo "::set-output name=created::true"
         fi
@@ -166,5 +181,5 @@ jobs:
       uses: softprops/action-gh-release@v1
       with:
         tag_name: ${{ steps.tag.outputs.tag }}
-        name: ${{ steps.tag.outputs.version }}
+        name: ${{ steps.vars.outputs.mixxx-version }}
         files: mixxx/build/*.dmg
