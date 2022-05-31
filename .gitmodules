@@ -1,8 +1,8 @@
 [submodule "vcpkg"]
 	path = vcpkg
-	url = git@github.com:fwcd/vcpkg.git
+	url = ../vcpkg.git
 	branch = arm64-osx-mixxx
 [submodule "mixxx"]
 	path = mixxx
-	url = git@github.com:fwcd/mixxx.git
+	url = ../mixxx.git
 	branch = arm64-osx-mixxx
