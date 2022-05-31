@@ -166,5 +166,5 @@ jobs:
       uses: softprops/action-gh-release@v1
       with:
         tag_name: ${{ steps.tag.outputs.tag }}
-        name: Version ${{ steps.tag.outputs.version }}
+        name: ${{ steps.tag.outputs.version }}
         files: mixxx/build/*.dmg
