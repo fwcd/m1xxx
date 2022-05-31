@@ -59,7 +59,7 @@ jobs:
     steps:
     - uses: actions/checkout@v3
       with:
-        submodules: recursive
+        submodules: true
     - name: Fetch versions and paths
       id: vars
       run: |
