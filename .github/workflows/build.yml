@@ -6,9 +6,10 @@ on:
     branches:
     - '*'
   workflow_dispatch:
-  workflow_run:
-    workflows: [Automerge]
-    types: [completed]
+  # TODO: Reenable once automerge is enabled again
+  # workflow_run:
+  #   workflows: [Automerge]
+  #   types: [completed]
 
 jobs:
   build:

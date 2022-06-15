@@ -1,7 +1,7 @@
 # M1xxx
 
 [![Build](https://github.com/fwcd/m1xxx/actions/workflows/build.yml/badge.svg)](https://github.com/fwcd/m1xxx/actions/workflows/build.yml)
-[![Automerge](https://github.com/fwcd/m1xxx/actions/workflows/automerge.yml/badge.svg)](https://github.com/fwcd/m1xxx/actions/workflows/automerge.yml)
+<!-- [![Automerge](https://github.com/fwcd/m1xxx/actions/workflows/automerge.yml/badge.svg)](https://github.com/fwcd/m1xxx/actions/workflows/automerge.yml) -->
 
 Unofficial Apple Silicon (arm64 macOS) builds of the free and open source DJ software [Mixxx](https://mixxx.org/).
 
