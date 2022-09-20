@@ -1,0 +1,10 @@
+#!/bin/bash
+
+cd "$(dirname $0)/.."
+set -e
+
+export VCPKG_ROOT="$(pwd)/vcpkg"
+export VCPKG_OVERLAY_TRIPLETS="$VCPKG_ROOT/overlay/triplets"
+export VCPKG_OVERLAY_PORTS="$VCPKG_ROOT/overlay/osx:vcpkg/overlay/ports"
+
+"$VCPKG_ROOT/vcpkg" "$@"
