@@ -60,7 +60,7 @@ TARGET_PACKAGES = [
     'qt5-macextras',
 ]
 
-# Packages to be built for the host architecture
+# Packages to be built for the host architecture when crosscompiling
 HOST_PACKAGES = [
     'qt5-host-tools',
 ]
@@ -83,6 +83,7 @@ def main():
     args = parser.parse_args()
     host = args.host
     target = args.target
+    is_crosscompiling = host != target
     vcpkg_root = args.vcpkg_root
     vcpkg = vcpkg_root / 'vcpkg'
 
@@ -101,7 +102,7 @@ def main():
         print('==> Bootstrapping vcpkg...')
         subprocess.run([str(vcpkg_root / 'bootstrap-vcpkg.sh'), '-disableMetrics'], check=True, cwd=vcpkg_root)
 
-    packages = TARGET_PACKAGES + [f'{pkg}:{host}' for pkg in HOST_PACKAGES]
+    packages = TARGET_PACKAGES + ([f'{pkg}:{host}' for pkg in HOST_PACKAGES] if is_crosscompiling else [])
     vcpkg_flags = [
         '--overlay-ports', 'overlay/ports',
         '--overlay-ports', 'overlay/osx',
