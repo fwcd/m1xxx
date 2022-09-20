@@ -17,47 +17,8 @@ jobs:
     env:
       DEPS_BASE_NAME: mixxx-deps-arm64-macos
       DMG_BASE_NAME: mixxx-arm64-macos
-      VCPKG_PACKAGES: >-
-        angle
-        chromaprint
-        fdk-aac
-        ffmpeg
-        fftw3
-        hidapi
-        hss1394
-        libdjinterop
-        libebur128
-        libflac
-        libkeyfinder
-        libmodplug
-        libogg
-        libopusenc
-        libshout
-        libsndfile
-        libusb
-        libvorbis
-        lilv
-        mp3lame
-        opus
-        opusfile
-        portaudio[asio]
-        portmidi
-        protobuf
-        pthreads
-        qt5-base
-        qt5-declarative
-        qt5-macextras
-        qt5-script
-        qt5-svg
-        qt5-translations
-        qtkeychain
-        rubberband
-        soundtouch
-        taglib
-        wavpack
-      VCPKG_DEFAULT_TRIPLET: arm64-osx-min11.0
-      VCPKG_OVERLAY_TRIPLETS: vcpkg/overlay/triplets
-      VCPKG_OVERLAY_PORTS: vcpkg/overlay/osx:vcpkg/overlay/ports
+      VCPKG_DEFAULT_TRIPLET: arm64-osx-min1100
+      VCPKG_DEFAULT_HOST_TRIPLET: x64-osx-min1012
       VCPKG_ROOT: ${{ github.workspace }}/vcpkg
       DEVELOPER_DIR: /Applications/Xcode_12.2.app/Contents/Developer
       SDKROOT: /Applications/Xcode_12.2.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX11.0.sdk
@@ -85,36 +46,32 @@ jobs:
     # Build dependencies
 
     - name: Bootstrap vcpkg
-      run: vcpkg/bootstrap-vcpkg.sh -disableMetrics
+      run: scripts/bootstrap-vcpkg
     - name: Set up vcpkg cache
       uses: actions/cache@v3
       with:
-        path: vcpkg/installed
-        # TODO: Include hashed list of installed packages (VCPKG_PACKAGES) in key?
+        path: ${{ env.VCPKG_ROOT }}/installed
+        # TODO: Include hashed list of installed packages in key?
         key: vcpkg-installed-${{ env.VCPKG_DEFAULT_TRIPLET }}-${{ steps.vars.outputs.vcpkg-commit }}-${{ github.ref }}-${{ github.run_number }}
         restore-keys: |
           vcpkg-installed-${{ env.VCPKG_DEFAULT_TRIPLET }}-${{ steps.vars.outputs.vcpkg-commit }}-${{ github.ref }}-
           vcpkg-installed-${{ env.VCPKG_DEFAULT_TRIPLET }}-${{ steps.vars.outputs.vcpkg-commit }}-
     - name: Check disk space
       run: df -h
-    - name: Upgrade vcpkg packages
-      run: vcpkg/vcpkg upgrade --no-dry-run
-    - name: Build vcpkg packages
-      run: vcpkg/vcpkg install --clean-after-build --recurse ${{ env.VCPKG_PACKAGES }}
+    - name: Install vcpkg packages
+      run: scripts/install-vcpkg-deps
     - name: Upload vcpkg build logs
       if: always()
       uses: actions/upload-artifact@v3
       with:
         name: vcpkg-buildlogs
-        path: |
-          vcpkg/buildtrees/**/build-*.log
-          vcpkg/buildtrees/**/install-*.log
+        path: ${{ env.VCPKG_ROOT }}/buildtrees/**/*.log
     
     # Export dependency archive to artifacts
 
     - name: Export vcpkg archive
       run: >-
-        vcpkg/vcpkg export
+        scripts/vcpkg export
         --x-all-installed
         --zip
         --output="${{ env.DEPS_BASE_NAME }}-${{ steps.vars.outputs.vcpkg-commit-short }}"
@@ -122,7 +79,7 @@ jobs:
       uses: actions/upload-artifact@v3
       with:
         name: ${{ env.DEPS_BASE_NAME }}-${{ steps.vars.outputs.vcpkg-commit-short }}
-        path: vcpkg/${{ env.DEPS_BASE_NAME }}-${{ steps.vars.outputs.vcpkg-commit-short }}.zip
+        path: ${{ env.VCPKG_ROOT }}/${{ env.DEPS_BASE_NAME }}-${{ steps.vars.outputs.vcpkg-commit-short }}.zip
 
     # Build Mixxx
 
@@ -144,7 +101,7 @@ jobs:
         -B build
         -DCMAKE_BUILD_TYPE=RelWithDebInfo
         -DMACOS_BUNDLE=ON
-        -DCMAKE_TOOLCHAIN_FILE=${{ github.workspace }}/vcpkg/scripts/buildsystems/vcpkg.cmake
+        -DCMAKE_TOOLCHAIN_FILE=${{ env.VCPKG_ROOT }}/scripts/buildsystems/vcpkg.cmake
         -DCMAKE_C_COMPILER=$(xcrun -find cc)
         -DCMAKE_CXX_COMPILER=$(xcrun -find c++)
         -DAPPLE_CODESIGN_IDENTITY=-

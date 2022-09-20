@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 
 import argparse
+import os
 import platform
 import subprocess
 import sys
@@ -70,12 +71,14 @@ def platform_triplet():
     return '-'.join([arch, os]) if os and arch else None
 
 def main():
+    default_triplet = platform_triplet()
+
     parser = argparse.ArgumentParser(description="Builds and installs Mixxx's dependencies in the vcpkg tree")
-    parser.add_argument('--host', type=str, default=platform_triplet(), help='The host triplet to use.')
-    parser.add_argument('--target', type=str, default=platform_triplet(), help='The target triplet to use.')
+    parser.add_argument('--host', type=str, default=os.getenv('VCPKG_DEFAULT_HOST_TRIPLET', default_triplet), help='The host triplet to use.')
+    parser.add_argument('--target', type=str, default=os.getenv('VCPKG_DEFAULT_TRIPLET', default_triplet), help='The target triplet to use.')
     parser.add_argument('--dry-run', action='store_true', help='Do not actually build/install.')
     parser.add_argument('--clean-after-build', action='store_true', help='Clean up buildtrees, packages and downloads after each build.')
-    parser.add_argument('--vcpkg-root', type=Path, default=DEFAULT_ROOT / 'vcpkg', help='The vcpkg tree.')
+    parser.add_argument('--vcpkg-root', type=Path, default=Path(os.getenv('VCPKG_ROOT', str(DEFAULT_ROOT / 'vcpkg'))), help='The vcpkg tree.')
 
     args = parser.parse_args()
     host = args.host
