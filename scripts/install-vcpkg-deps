@@ -83,8 +83,6 @@ def main():
     vcpkg_root = args.vcpkg_root
     vcpkg = vcpkg_root / 'vcpkg'
 
-    
-
     if not host:
         print('No host triplet!')
         sys.exit(1)
