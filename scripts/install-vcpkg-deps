@@ -111,7 +111,7 @@ def main():
     ]
     subprocess.run([str(vcpkg), 'remove', *vcpkg_flags, *remove_flags], check=True)
 
-    print('==> Installing {len(packages)} packages...')
+    print(f'==> Installing {len(packages)} packages...')
     install_flags = [
         '--recurse',
         *(['--dry-run'] if args.dry_run else []),
