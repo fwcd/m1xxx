@@ -1,0 +1,6 @@
+#!/bin/bash
+
+cd "$(dirname $0)/.."
+set -e
+
+vcpkg/bootstrap-vcpkg.sh -disableMetrics
