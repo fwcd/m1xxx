@@ -8,7 +8,7 @@ import sys
 
 from pathlib import Path
 
-DEFAULT_ROOT = Path(__file__).parent.parent
+ROOT = Path(__file__).resolve().parent.parent
 
 TRIPLET_OSS = {
     'Darwin': 'osx',
@@ -78,7 +78,7 @@ def main():
     parser.add_argument('--target', type=str, default=os.getenv('VCPKG_DEFAULT_TRIPLET', default_triplet), help='The target triplet to use.')
     parser.add_argument('--dry-run', action='store_true', help='Do not actually build/install.')
     parser.add_argument('--clean-after-build', action='store_true', help='Clean up buildtrees, packages and downloads after each build.')
-    parser.add_argument('--vcpkg', type=Path, default=Path(os.getenv('VCPKG_ROOT', str(DEFAULT_ROOT / 'scripts' / 'vcpkg'))), help='The vcpkg binary to use.')
+    parser.add_argument('--vcpkg', type=Path, default=Path(os.getenv('VCPKG_ROOT', str(ROOT / 'scripts' / 'vcpkg'))), help='The vcpkg binary to use.')
 
     args = parser.parse_args()
     host = args.host
