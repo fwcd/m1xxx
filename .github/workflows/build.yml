@@ -20,6 +20,8 @@ jobs:
       VCPKG_DEFAULT_TRIPLET: arm64-osx-min1100
       VCPKG_DEFAULT_HOST_TRIPLET: x64-osx-min1012
       VCPKG_ROOT: ${{ github.workspace }}/vcpkg
+      MIXXX_ROOT: ${{ github.workspace }}/mixxx
+      SCRIPTS_ROOT: ${{ github.workspace }}/scripts
       DEVELOPER_DIR: /Applications/Xcode_12.2.app/Contents/Developer
       SDKROOT: /Applications/Xcode_12.2.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX11.0.sdk
     
@@ -30,7 +32,7 @@ jobs:
     - name: Fetch versions and paths
       id: vars
       run: |
-        for mod in vcpkg mixxx; do
+        for mod in "${{ env.VCPKG_ROOT }}" "${{ env.MIXXX_ROOT }}"; do
           echo "::set-output name=$mod-commit::$(cd $mod && git rev-parse HEAD)"
           echo "::set-output name=$mod-commit-short::$(cd $mod && git rev-parse --short HEAD)"
         done
@@ -59,7 +61,7 @@ jobs:
     - name: Check disk space
       run: df -h
     - name: Install vcpkg packages
-      run: scripts/install-vcpkg-deps
+      run: ${{ env.SCRIPTS_ROOT }}/install-vcpkg-deps
     - name: Upload vcpkg build logs
       if: always()
       uses: actions/upload-artifact@v3
@@ -71,7 +73,7 @@ jobs:
 
     - name: Export vcpkg archive
       run: >-
-        scripts/vcpkg export
+        ${{ env.SCRIPTS_ROOT }}/vcpkg export
         --x-all-installed
         --zip
         --output="${{ env.DEPS_BASE_NAME }}-${{ steps.vars.outputs.vcpkg-commit-short }}"
@@ -96,12 +98,11 @@ jobs:
           ccache-
     - name: Configure Mixxx build
       run: >-
-        cmake
+        ${{ env.SCRIPTS_ROOT }}/cmake
         -G Ninja
         -B build
         -DCMAKE_BUILD_TYPE=RelWithDebInfo
         -DMACOS_BUNDLE=ON
-        -DCMAKE_TOOLCHAIN_FILE=${{ env.VCPKG_ROOT }}/scripts/buildsystems/vcpkg.cmake
         -DCMAKE_C_COMPILER=$(xcrun -find cc)
         -DCMAKE_CXX_COMPILER=$(xcrun -find c++)
         -DAPPLE_CODESIGN_IDENTITY=-
@@ -111,9 +112,9 @@ jobs:
       uses: actions/upload-artifact@v3
       with:
         name: mixxx-configurelogs
-        path: mixxx/build/CMakeFiles/*.log
+        path: ${{ env.MIXXX_ROOT }}/build/CMakeFiles/*.log
     - name: Build Mixxx
-      run: cmake --build build
+      run: ${{ env.SCRIPTS_ROOT }}/cmake --build build
       working-directory: mixxx
     - name: Package Mixxx
       run: cpack -G DragNDrop -V
@@ -122,7 +123,7 @@ jobs:
       uses: actions/upload-artifact@v3
       with:
         name: ${{ env.DMG_BASE_NAME }}
-        path: mixxx/build/*.dmg
+        path: ${{ env.MIXXX_ROOT }}/build/*.dmg
     - name: Create tag
       id: tag
       run: |
@@ -144,4 +145,4 @@ jobs:
       with:
         tag_name: ${{ steps.tag.outputs.tag }}
         name: ${{ steps.vars.outputs.mixxx-version }}
-        files: mixxx/build/*.dmg
+        files: ${{ env.MIXXX_ROOT }}/build/*.dmg
