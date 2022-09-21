@@ -48,7 +48,7 @@ jobs:
     # Build dependencies
 
     - name: Bootstrap vcpkg
-      run: scripts/bootstrap-vcpkg
+      run: ${{ env.SCRIPTS_ROOT }}/bootstrap-vcpkg
     - name: Set up vcpkg cache
       uses: actions/cache@v3
       with:
