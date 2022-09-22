@@ -33,8 +33,8 @@ jobs:
       id: vars
       run: |
         for mod in "${{ env.VCPKG_ROOT }}" "${{ env.MIXXX_ROOT }}"; do
-          echo "::set-output name=$mod-commit::$(cd $mod && git rev-parse HEAD)"
-          echo "::set-output name=$mod-commit-short::$(cd $mod && git rev-parse --short HEAD)"
+          echo "::set-output name=$(basename "$mod")-commit::$(cd $mod && git rev-parse HEAD)"
+          echo "::set-output name=$(basename "$mod")-commit-short::$(cd $mod && git rev-parse --short HEAD)"
         done
         echo "::set-output name=mixxx-version::$(scripts/mixxx-version)"
         echo "::set-output name=home::$HOME"
