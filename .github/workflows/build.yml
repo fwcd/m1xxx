@@ -98,9 +98,10 @@ jobs:
           ccache-
     - name: Configure Mixxx build
       run: >-
-        ${{ env.SCRIPTS_ROOT }}/cmake
+        cmake
         -G Ninja
         -B build
+        -DCMAKE_TOOLCHAIN_FILE=${{ env.VCPKG_ROOT }}/scripts/buildsystems/vcpkg.cmake
         -DCMAKE_BUILD_TYPE=RelWithDebInfo
         -DMACOS_BUNDLE=ON
         -DCMAKE_C_COMPILER=$(xcrun -find cc)
@@ -114,7 +115,7 @@ jobs:
         name: mixxx-configurelogs
         path: ${{ env.MIXXX_ROOT }}/build/CMakeFiles/*.log
     - name: Build Mixxx
-      run: ${{ env.SCRIPTS_ROOT }}/cmake --build build
+      run: cmake --build build
       working-directory: mixxx
     - name: Package Mixxx
       run: cpack -G DragNDrop -V
