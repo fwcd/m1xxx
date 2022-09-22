@@ -71,17 +71,17 @@ jobs:
     
     # Export dependency archive to artifacts
 
-    - name: Export vcpkg archive
-      run: >-
-        ${{ env.SCRIPTS_ROOT }}/vcpkg export
-        --x-all-installed
-        --zip
-        --output="${{ env.DEPS_BASE_NAME }}-${{ steps.vars.outputs.vcpkg-commit-short }}"
-    - name: Upload vcpkg archive
-      uses: actions/upload-artifact@v3
-      with:
-        name: ${{ env.DEPS_BASE_NAME }}-${{ steps.vars.outputs.vcpkg-commit-short }}
-        path: ${{ env.VCPKG_ROOT }}/${{ env.DEPS_BASE_NAME }}-${{ steps.vars.outputs.vcpkg-commit-short }}.zip
+    # - name: Export vcpkg archive
+    #   run: >-
+    #     ${{ env.SCRIPTS_ROOT }}/vcpkg export
+    #     --x-all-installed
+    #     --zip
+    #     --output="${{ env.DEPS_BASE_NAME }}-${{ steps.vars.outputs.vcpkg-commit-short }}"
+    # - name: Upload vcpkg archive
+    #   uses: actions/upload-artifact@v3
+    #   with:
+    #     name: ${{ env.DEPS_BASE_NAME }}-${{ steps.vars.outputs.vcpkg-commit-short }}
+    #     path: ${{ env.VCPKG_ROOT }}/${{ env.DEPS_BASE_NAME }}-${{ steps.vars.outputs.vcpkg-commit-short }}.zip
 
     # Build Mixxx
 
