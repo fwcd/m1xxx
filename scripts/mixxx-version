@@ -5,9 +5,9 @@ import pathlib
 import re
 import subprocess
 
-ROOT_DIR = pathlib.Path(__file__).resolve().parent.parent
-MIXXX_DIR = ROOT_DIR / 'mixxx'
-CMAKELISTS_PATH = MIXXX_DIR / 'CMakeLists.txt'
+ROOT = pathlib.Path(__file__).resolve().parent.parent
+MIXXX_ROOT = ROOT / 'mixxx'
+CMAKELISTS_PATH = MIXXX_ROOT / 'CMakeLists.txt'
 
 def main():
     parser = argparse.ArgumentParser(description='Fetches the Mixxx version')
@@ -29,7 +29,7 @@ def main():
     
     # Read Git version
     if not args.short:
-        git_output = subprocess.run(['git', 'rev-parse', '--short', 'HEAD'], cwd=MIXXX_DIR, capture_output=True)
+        git_output = subprocess.run(['git', 'rev-parse', '--short', 'HEAD'], cwd=MIXXX_ROOT, capture_output=True)
         git_version = git_output.stdout.decode('utf-8')
         if git_version:
             parts.append(git_version)
