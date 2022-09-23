@@ -131,6 +131,7 @@ jobs:
         name: ${{ env.DMG_BASE_NAME }}
         path: ${{ env.MIXXX_ROOT }}/build/*.dmg
     - name: Create tag
+      if: github.ref == 'refs/heads/main'
       id: tag
       run: |
         version="${{ steps.vars.outputs.mixxx-version }}"
