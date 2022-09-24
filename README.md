@@ -23,7 +23,7 @@ While the `main` branch of Mixxx can already be compiled for arm64 macOS using t
 
 While the CI workflows in this repo mainly deal with the case of cross-compiling Mixxx from x86_64 macOS runners to arm64, it is also possible to compile directly from an arm64 macOS (Apple Silicon) host.
 
-First, make sure to have the Homebrew installed and the submodules in this repo checked out (using `git submodule update`). To install the system dependencies, run:
+First, make sure to have Homebrew installed and the submodules in this repo checked out (using `git submodule update`). To install the system dependencies, run:
 
 ```sh
 scripts/install-brew-deps
