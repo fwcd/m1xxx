@@ -26,7 +26,6 @@ TARGET_PACKAGES = [
     'fdk-aac',
     'ffmpeg',
     'fftw3',
-    'hidapi',
     'libdjinterop',
     'libebur128',
     'libflac',
@@ -35,7 +34,6 @@ TARGET_PACKAGES = [
     'libogg',
     'libopusenc',
     'libsndfile[core]',
-    'libusb',
     'libvorbis',
     'lilv',
     'mp3lame',
@@ -60,7 +58,9 @@ TARGET_PACKAGES = [
 # Packages to be built only when compiling for a given target os
 PLATFORM_PACKAGES = {
     'osx': [
+        'hidapi', # Depends on libusb
         'hss1394',
+        'libusb', # Skip libusb for now since it does not support iOS officially (however there seem to be inofficial ports, which we could investigate)
         'qtkeychain', # libgcrypt seems to be unsupported on iOS
         'qt5-macextras',
     ],
