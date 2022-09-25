@@ -27,7 +27,6 @@ TARGET_PACKAGES = [
     'ffmpeg',
     'fftw3',
     'hidapi',
-    'hss1394',
     'libdjinterop',
     'libebur128',
     'libflac',
@@ -52,13 +51,20 @@ TARGET_PACKAGES = [
     'qt5-script',
     'qt5-svg',
     'qt5-translations',
-    'qtkeychain',
     'rubberband',
     'soundtouch',
     'taglib',
     'wavpack',
-    'qt5-macextras',
 ]
+
+# Packages to be built only when compiling for a given target os
+PLATFORM_PACKAGES = {
+    'osx': [
+        'hss1394',
+        'qtkeychain', # libgcrypt seems to be unsupported on iOS
+        'qt5-macextras',
+    ],
+}
 
 # Packages to be built for the host architecture when crosscompiling
 HOST_PACKAGES = [
@@ -99,7 +105,11 @@ def main():
     print(f'Host triplet:   {host}')
     print(f'Target triplet: {target}')
 
-    packages = TARGET_PACKAGES + ([f'{pkg}:{host}' for pkg in HOST_PACKAGES] if build_host_packages else [])
+    target_os = target.split('-')[1]
+
+    host_packages = [f'{pkg}:{host}' for pkg in HOST_PACKAGES] if build_host_packages else []
+    platform_packages = PLATFORM_PACKAGES.get(target_os, [])
+    packages = TARGET_PACKAGES + platform_packages + host_packages
     vcpkg_flags = [
         '--host-triplet', host,
         '--triplet', target,
