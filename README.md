@@ -47,6 +47,28 @@ cmake -B build -G Ninja -DCMAKE_TOOLCHAIN_FILE="$VCPKG_ROOT/scripts/buildsystems
 cmake --build build
 ```
 
+## Building for iOS (WIP)
+
+> **Note:** These instructions are not fully tested yet and may still cause build failures.
+
+To build for iOS, install the system dependencies as above, make sure the submodules are checked out and install the dependencies by running:
+
+```sh
+export SDKROOT="$(xcrun --sdk iphoneos --show-sdk-path)"
+
+scripts/bootstrap-vcpkg
+scripts/install-vcpkg-deps --skip-host-packages --target arm64-ios
+```
+
+To configure Mixxx, run:
+
+```sh
+cd mixxx
+cmake -B build -G Xcode -DCMAKE_SYSROOT="$SDKROOT" -DCMAKE_SYSTEM_NAME=iOS
+```
+
+The Xcode project at `build/mixxx.xcodeproj` should then contain an iOS target for Mixxx.
+
 ## Credits
 
 Thanks to [`daschuer`](https://github.com/daschuer) for the work involved in backporting the relevant Qt patches, parts of the CI workflows and assistance in building the dependencies!
