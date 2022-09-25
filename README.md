@@ -17,7 +17,7 @@ In short, this repo builds Mixxx's dependencies, including a patched version of 
 
 ## Upstreaming process
 
-While the `main` branch of Mixxx can already be compiled for arm64 macOS using the right flags ([see the CI workflow](https://github.com/fwcd/m1xxx/blob/3595ff0f1da65a9ad7504a70f2d693d55dcf2b19/.github/workflows/build.yml#L94-L108)), [the patches to the dependencies in `vcpkg`](https://github.com/fwcd/vcpkg/compare/fwcd:f9cdab3...fwcd:cbaa173) have not been (completely) upstreamed yet.
+While the `main` branch of Mixxx can already be compiled for arm64 macOS using the right flags ([see the CI workflow](https://github.com/fwcd/m1xxx/blob/3595ff0f1da65a9ad7504a70f2d693d55dcf2b19/.github/workflows/build.yml#L94-L108)), [the patches to the dependencies in `vcpkg`](https://github.com/fwcd/vcpkg/compare/mixxxdj:2.4...fwcd:arm64-osx-mixxx) have not been (completely) upstreamed yet.
 
 ## Building natively on Apple Silicon (arm64 macOS) hosts
 
