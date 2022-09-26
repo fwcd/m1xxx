@@ -17,7 +17,7 @@ In short, this repo builds Mixxx's dependencies, including a patched version of 
 
 ## Upstreaming process
 
-Both the `main` and the `vcpkg` branch now use the official upstream revisions.
+Both the `mixxx` and the `vcpkg` branch now use the official upstream revisions.
 
 ## Building natively on Apple Silicon (arm64 macOS) hosts
 
