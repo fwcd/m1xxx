@@ -67,9 +67,7 @@ PLATFORM_PACKAGES = {
 }
 
 # Packages to be built for the host architecture when crosscompiling
-HOST_PACKAGES = [
-    'qt5-host-tools',
-]
+HOST_PACKAGES = []
 
 def platform_triplet():
     arch = TRIPLET_ARCHS.get(platform.machine(), None)
