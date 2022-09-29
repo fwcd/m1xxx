@@ -43,7 +43,7 @@ export VCPKG_ROOT="$(pwd)/vcpkg"
 export VCPKG_DEFAULT_TRIPLET=arm64-osx
 
 cd mixxx
-cmake -B build -G Ninja
+cmake -B build -G Ninja -DCMAKE_TOOLCHAIN_FILE="$VCPKG_ROOT/scripts/buildsystems/vcpkg.cmake"
 cmake --build build
 ```
 
