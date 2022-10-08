@@ -40,7 +40,7 @@ jobs:
       shell: bash
     - name: Set up build environment
       run: |
-        brew install nasm automake ccache ninja
+        ${{ env.SCRIPTS_ROOT }}/install-brew-deps
         xcrun --show-sdk-version
 
     # Build dependencies
