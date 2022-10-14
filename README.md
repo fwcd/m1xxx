@@ -71,7 +71,7 @@ cmake --build build
 To build for iOS, install the system dependencies as above, make sure the submodules are checked out and install the dependencies by running:
 
 ```sh
-export SDKROOT="$(xcrun --sdk iphoneos --show-sdk-path)"
+source vars/ios-sdkroot.sh
 
 scripts/bootstrap-vcpkg
 scripts/install-vcpkg-deps --skip-host-packages --target arm64-ios
