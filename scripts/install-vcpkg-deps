@@ -78,6 +78,10 @@ def platform_triplet():
     return '-'.join([arch, os]) if os and arch else None
 
 def main():
+    # Disable stack traces, they usually only cause noise and obscure the actual build errors
+    # (which usually happen at a higher level somewhere in vcpkg's call stack)
+    sys.tracebacklimit = 0
+
     default_triplet = platform_triplet()
 
     parser = argparse.ArgumentParser(description="Builds and installs Mixxx's dependencies in the vcpkg tree")
