@@ -1,0 +1,43 @@
+#!/bin/bash
+
+set -e
+cd "$(dirname $0)/.."
+
+if [ $# -ne 1 ]; then
+  echo "Usage: $0 [version, e.g. 5.12.4]"
+  exit 1
+fi
+
+version=(${1//./ })
+
+if [ ${#version[@]} -ne 3 ]; then
+  echo "Version must be major.minor.patch, e.g. 5.12.4"
+  exit 1
+fi
+
+major_ver="${version[0]}"
+minor_ver="${version[1]}"
+patch_ver="${version[2]}"
+version="$major_ver.$minor_ver.$patch_ver"
+
+echo "==> Updating to Qt $version..."
+
+cd vcpkg
+
+if [ -n "$(git status --porcelain)" ]; then
+  echo "Your vcpkg tree has uncommitted changes, please make sure it is clean!"
+  exit 1
+fi
+
+if ! command -v jq &>/dev/null; then
+  echo "Please make sure to have jq installed and on your PATH!"
+  exit 1
+fi
+
+echo "==> Updating vcpkg.json manifests..."
+
+for manifest in overlay/osx/qt*/vcpkg.json; do
+  for key in version-semver version-string; do
+    jq "if .\"$key\"? then .\"$key\" = \"$version\" else . end" $manifest | sponge $manifest
+  done
+done
