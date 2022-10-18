@@ -47,7 +47,7 @@ done
 
 echo "==> Updating version in port hashes..."
 
-porthashesfile="overlay/osx/qt$majorver-base/cmake/qt_port_hashes.cmake"
+porthashesfile="$PWD/overlay/osx/qt$majorver-base/cmake/qt_port_hashes.cmake"
 
 cat "$porthashesfile" \
   | sed "s/\\(set(QT_MAJOR_MINOR_VER *\\)[0-9]*\\()\\)/\\1$majorminorver\\2/g" \
@@ -55,6 +55,10 @@ cat "$porthashesfile" \
   | sponge "$porthashesfile"
 
 echo "==> Updating port hashes..."
+
+tmpdir="$(mktemp -dt m1xxx-update-qt-downloads)"
+trap "rm -rf '$tmpdir'" EXIT
+cd "$tmpdir"
 
 while read line; do
   if [[ $line =~ QT_HASH_qt$majorver-([a-zA-Z0-9]+)( *) ]]; then
