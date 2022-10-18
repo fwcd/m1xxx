@@ -69,7 +69,7 @@ while read line; do
     curl -sLO "$url"
     archivehash=$(sha512sum $archivename | cut -d " " -f 1)
     varname="QT_HASH_qt$majorver-$name"
-    sed "s/set($varname.*/set($varname$spaces$archivehash)/g" "$porthashesfile" | sponge "$porthashesfile"
+    sed "s/set($varname$spaces.*/set($varname$spaces$archivehash)/g" "$porthashesfile" | sponge "$porthashesfile"
     rm "$archivename"
     echo "qt$majorver-$name -> $archivehash"
   fi
