@@ -25,7 +25,8 @@ fi
 major_ver="${version[0]}"
 minor_ver="${version[1]}"
 patch_ver="${version[2]}"
-version="$major_ver.$minor_ver.$patch_ver"
+major_minor_ver="$major_ver.$minor_ver"
+version="$major_minor_ver.$patch_ver"
 
 echo "==> Updating to Qt $version..."
 
@@ -36,19 +37,42 @@ if [ -n "$(git status --porcelain)" ]; then
   exit 1
 fi
 
-echo "==> Updating vcpkg.json manifests..."
+echo "==> Updating versions in vcpkg.json manifests..."
 
 for manifest_file in overlay/osx/qt*/vcpkg.json; do
   for key in version-semver version-string; do
-    jq "if .\"$key\"? then .\"$key\" = \"$version\" else . end" $manifest_file | sponge $manifest_file
+    jq "if .\"$key\"? then .\"$key\" = \"$version\" else . end" "$manifest_file" | sponge "$manifest_file"
   done
 done
 
-echo "==> Updating port hashes..."
+echo "==> Updating version in port hashes..."
 
 port_hashes_file="overlay/osx/qt$major_ver-base/cmake/qt_port_hashes.cmake"
 
-cat $port_hashes_file \
+cat "$port_hashes_file" \
   | sed "s/\\(set(QT_MAJOR_MINOR_VER *\\)[0-9]*\\()\\)/\\1$major_ver.$minor_ver\\2/g" \
   | sed "s/\\(set(QT_PATCH_VER *\\)[0-9]*\\()\\)/\\1$patch_ver\\2/g" \
-  | sponge $port_hashes_file
+  | sponge "$port_hashes_file"
+
+echo "==> Updating port hashes..."
+
+# TODO: Use temporary directory
+
+while read line; do
+  if [[ $line =~ QT_HASH_qt$major_ver-([a-zA-Z0-9]+)( *) ]]; then
+    name="${BASH_REMATCH[1]}"
+    spaces="${BASH_REMATCH[2]}"
+    archivename="qt$name-everywhere-src-$version.tar.xz"
+    url="https://download.qt.io/archive/qt/$major_minor_ver/$version/submodules/$archivename"
+    curl -sLO "$url"
+    archivehash=$(sha512sum $archivename | cut -d " " -f 1)
+    varname="QT_HASH_qt$major_ver-$name"
+    sed "s/set($varname.*/set($varname$spaces$archivehash)/g" "$port_hashes_file" | sponge "$port_hashes_file"
+    rm "$archivename"
+    echo "qt$major_ver-$name -> $archivehash"
+  fi
+done < "$port_hashes_file"
+
+echo "==> Updated versions and hashes. Note that you may need to rebase the patches in qt$major_ver-base!"
+
+# TODO: Rebase patches automatically here (if possible without conflicts)
