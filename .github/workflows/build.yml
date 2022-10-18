@@ -29,14 +29,12 @@ jobs:
       with:
         submodules: true
     - name: Fetch versions and paths
-      id: vars
       run: |
         for mod in "${{ env.VCPKG_ROOT }}" "${{ env.MIXXX_ROOT }}"; do
-          echo "::set-output name=$(basename "$mod")-commit::$(cd $mod && git rev-parse HEAD)"
-          echo "::set-output name=$(basename "$mod")-commit-short::$(cd $mod && git rev-parse --short HEAD)"
+          echo "$(basename "$mod")_commit=$(cd $mod && git rev-parse HEAD)" >> "$GITHUB_ENV"
+          echo "$(basename "$mod")_commit_short=$(cd $mod && git rev-parse --short HEAD)" >> "$GITHUB_ENV"
         done
-        echo "::set-output name=mixxx-version::$(scripts/mixxx-version)"
-        echo "::set-output name=home::$HOME"
+        echo "mixxx_version=$(scripts/mixxx-version)" >> "$GITHUB_ENV"
       shell: bash
     - name: Set up build environment
       run: |
@@ -52,10 +50,10 @@ jobs:
       with:
         path: ${{ env.VCPKG_ROOT }}/installed
         # TODO: Include hashed list of installed packages in key?
-        key: vcpkg-installed-${{ env.VCPKG_DEFAULT_TRIPLET }}-${{ steps.vars.outputs.vcpkg-commit }}-${{ github.ref }}-${{ github.run_number }}
+        key: vcpkg-installed-${{ env.VCPKG_DEFAULT_TRIPLET }}-${{ env.vcpkg_commit }}-${{ github.ref }}-${{ github.run_number }}
         restore-keys: |
-          vcpkg-installed-${{ env.VCPKG_DEFAULT_TRIPLET }}-${{ steps.vars.outputs.vcpkg-commit }}-${{ github.ref }}-
-          vcpkg-installed-${{ env.VCPKG_DEFAULT_TRIPLET }}-${{ steps.vars.outputs.vcpkg-commit }}-
+          vcpkg-installed-${{ env.VCPKG_DEFAULT_TRIPLET }}-${{ env.vcpkg_commit }}-${{ github.ref }}-
+          vcpkg-installed-${{ env.VCPKG_DEFAULT_TRIPLET }}-${{ env.vcpkg_commit }}-
     - name: Check disk space
       run: df -h
     - name: Install vcpkg packages
@@ -74,12 +72,12 @@ jobs:
         ${{ env.SCRIPTS_ROOT }}/vcpkg export
         --x-all-installed
         --zip
-        --output="${{ env.DEPS_BASE_NAME }}-${{ steps.vars.outputs.vcpkg-commit-short }}"
+        --output="${{ env.DEPS_BASE_NAME }}-${{ env.vcpkg_commit_short }}"
     - name: Upload vcpkg archive
       uses: actions/upload-artifact@v3
       with:
-        name: ${{ env.DEPS_BASE_NAME }}-${{ steps.vars.outputs.vcpkg-commit-short }}
-        path: ${{ env.VCPKG_ROOT }}/${{ env.DEPS_BASE_NAME }}-${{ steps.vars.outputs.vcpkg-commit-short }}.zip
+        name: ${{ env.DEPS_BASE_NAME }}-${{ env.vcpkg_commit_short }}
+        path: ${{ env.VCPKG_ROOT }}/${{ env.DEPS_BASE_NAME }}-${{ env.vcpkg_commit_short }}.zip
 
     # Build Mixxx
 
@@ -88,11 +86,11 @@ jobs:
     - name: Set up build cache
       uses: actions/cache@v3
       with:
-        path: ${{ steps.vars.outputs.home }}/Library/Caches/ccache
-        key: ccache-${{ steps.vars.outputs.mixxx-commit }}-${{ github.ref }}-${{ github.run_number }}
+        path: $HOME/Library/Caches/ccache
+        key: ccache-${{ env.mixxx_commit }}-${{ github.ref }}-${{ github.run_number }}
         restore-keys: |
-          ccache-${{ steps.vars.outputs.mixxx-commit }}-${{ github.ref }}-
-          ccache-${{ steps.vars.outputs.mixxx-commit }}-
+          ccache-${{ env.mixxx_commit }}-${{ github.ref }}-
+          ccache-${{ env.mixxx_commit }}-
           ccache-
     - name: Configure Mixxx build
       run: >-
@@ -129,24 +127,23 @@ jobs:
         path: ${{ env.MIXXX_ROOT }}/build/*.dmg
     - name: Create tag
       if: github.ref == 'refs/heads/main'
-      id: tag
       run: |
-        version="${{ steps.vars.outputs.mixxx-version }}"
+        version="${{ env.mixxx_version }}"
         tag="v$version"
         git fetch --tags
         if git rev-parse "$tag" >/dev/null 2>&1; then
-          echo "::set-output name=created::false"
+          echo "tag_created=false" >> "$GITHUB_ENV"
         else
           git tag -am "Version $version" "$tag"
           git push origin "$tag"
-          echo "::set-output name=tag::$tag"
-          echo "::set-output name=created::true"
+          echo "tag=$tag" >> "$GITHUB_ENV"
+          echo "tag_created=true" >> "$GITHUB_ENV"
         fi
       shell: bash
     - name: Create GitHub release
-      if: ${{ steps.tag.outputs.created == 'true' }}
+      if: ${{ env.tag_created == 'true' }}
       uses: softprops/action-gh-release@v1
       with:
-        tag_name: ${{ steps.tag.outputs.tag }}
-        name: ${{ steps.vars.outputs.mixxx-version }}
+        tag_name: ${{ env.tag }}
+        name: ${{ env.mixxx_version }}
         files: ${{ env.MIXXX_ROOT }}/build/*.dmg
