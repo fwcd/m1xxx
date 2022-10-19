@@ -14,9 +14,9 @@ jobs:
   build:
     runs-on: macos-11
     env:
-      DEPS_BASE_NAME: mixxx-deps-arm64-macos
-      DMG_BASE_NAME: mixxx-arm64-macos
-      VCPKG_DEFAULT_TRIPLET: arm64-osx-min1100
+      DEPS_BASE_NAME: mixxx-deps-x86_64-macos
+      DMG_BASE_NAME: mixxx-x86_64-macos
+      VCPKG_DEFAULT_TRIPLET: x64-osx-min1012
       VCPKG_DEFAULT_HOST_TRIPLET: x64-osx-min1012
       VCPKG_OVERLAY_TRIPLETS: vcpkg/overlay/triplets
       VCPKG_OVERLAY_PORTS: vcpkg/overlay/osx:vcpkg/overlay/ports
@@ -104,9 +104,9 @@ jobs:
         -DRUN_HAVE_POSIX_REGEX=0
         -DCMAKE_C_COMPILER=$(xcrun -find cc)
         -DCMAKE_CXX_COMPILER=$(xcrun -find c++)
-        -DCMAKE_OSX_DEPLOYMENT_TARGET="11.0"
-        -DCMAKE_C_FLAGS="-arch arm64 -mmacosx-version-min=11.0"
-        -DCMAKE_CXX_FLAGS="-arch arm64 -mmacosx-version-min=11.0"
+        -DCMAKE_OSX_DEPLOYMENT_TARGET="10.12"
+        -DCMAKE_C_FLAGS="-mmacosx-version-min=10.12"
+        -DCMAKE_CXX_FLAGS="-mmacosx-version-min=10.12"
       working-directory: mixxx
     - name: Upload Mixxx configuration logs
       if: always()
