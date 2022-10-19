@@ -39,7 +39,7 @@ scripts/install-vcpkg-deps
 To build Mixxx, run:
 
 ```sh
-export VCPKG_ROOT="$(pwd)/vcpkg"
+export VCPKG_ROOT="$PWD/vcpkg"
 export VCPKG_DEFAULT_TRIPLET=arm64-osx
 
 cd mixxx
@@ -61,10 +61,17 @@ scripts/install-vcpkg-deps --skip-host-packages --target arm64-ios
 To configure Mixxx, run:
 
 ```sh
+export VCPKG_ROOT="$PWD/vcpkg"
+export VCPKG_DEFAULT_TRIPLET=arm64-ios
+
 source vars/ios-sdkroot.sh
 
 cd mixxx
-cmake -B build -G Xcode -DCMAKE_SYSROOT="$SDKROOT" -DCMAKE_SYSTEM_NAME=iOS
+cmake -B build \
+      -G Xcode \
+      -DCMAKE_SYSROOT="$SDKROOT" \
+      -DCMAKE_SYSTEM_NAME=iOS \
+      -DCMAKE_TOOLCHAIN_FILE="$VCPKG_ROOT/scripts/buildsystems/vcpkg.cmake"
 ```
 
 The Xcode project at `build/mixxx.xcodeproj` should then contain an iOS target for Mixxx.
