@@ -95,6 +95,7 @@ cmake -B build \
       -DCMAKE_TOOLCHAIN_FILE="$VCPKG_ROOT/scripts/buildsystems/vcpkg.cmake" \
       -DRUBBERBAND=OFF \
       -DQTKEYCHAIN=OFF \
+      -DBATTERY=OFF \
       -DHID=OFF
 ```
 
