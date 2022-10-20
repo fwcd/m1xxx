@@ -81,6 +81,10 @@ To configure Mixxx, run:
 export VCPKG_ROOT="$PWD/vcpkg"
 export VCPKG_DEFAULT_TRIPLET=arm64-ios
 
+# NOTE: This script should not be sourced before the vcpkg dependencies have
+#       been installed, otherwise the Qt host tools will implicitly be
+#       built with the iOS sysroot rather than the macOS sysroot and throw
+#       linker errors.
 source vars/ios-sdkroot.sh
 
 cd mixxx
