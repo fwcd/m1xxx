@@ -75,7 +75,9 @@ cmake -B build \
       -G Xcode \
       -DCMAKE_SYSROOT="$SDKROOT" \
       -DCMAKE_SYSTEM_NAME=iOS \
-      -DCMAKE_TOOLCHAIN_FILE="$VCPKG_ROOT/scripts/buildsystems/vcpkg.cmake"
+      -DCMAKE_TOOLCHAIN_FILE="$VCPKG_ROOT/scripts/buildsystems/vcpkg.cmake" \
+      -DRUBBERBAND=OFF \
+      -DQTKEYCHAIN=OFF
 ```
 
 The Xcode project at `build/mixxx.xcodeproj` should then contain an iOS target for Mixxx.
