@@ -5,6 +5,8 @@
 
 Unofficial Apple Silicon (arm64 macOS) builds of the free and open source DJ software [Mixxx](https://mixxx.org/).
 
+[Get the most recent binaries from GitHub Releases here.](https://github.com/fwcd/m1xxx/releases)
+
 ![Screenshot](images/screenshot.png)
 
 ## Background
