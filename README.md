@@ -38,6 +38,8 @@ scripts/bootstrap-vcpkg
 scripts/install-vcpkg-deps
 ```
 
+> Note: If vcpkg produces a 'missing Python' error message, make sure to have `python` on your PATH, e.g. by symlinking it to `python3` with `ln -s /opt/homebrew/bin/python3 /usr/local/bin/python`.
+
 To build Mixxx, run:
 
 ```sh
