@@ -1,13 +1,23 @@
 # M1xxx
 
 [![Build](https://github.com/fwcd/m1xxx/actions/workflows/build.yml/badge.svg)](https://github.com/fwcd/m1xxx/actions/workflows/build.yml)
-<!-- [![Automerge](https://github.com/fwcd/m1xxx/actions/workflows/automerge.yml/badge.svg)](https://github.com/fwcd/m1xxx/actions/workflows/automerge.yml) -->
 
 Unofficial Apple Silicon (arm64 macOS) builds of the free and open source DJ software [Mixxx](https://mixxx.org/).
 
+![Screenshot](images/screenshot.png)
+
+## Installation
+
 [Get the most recent binaries from GitHub Releases here.](https://github.com/fwcd/m1xxx/releases)
 
-![Screenshot](images/screenshot.png)
+Alternatively you can install `m1xxx` via [Homebrew](https://brew.sh/) using
+
+```sh
+brew tap fwcd/mixxx
+brew install --cask m1xxx
+```
+
+This has the additional advantage of making it easy to upgrade or remove `m1xxx`.
 
 ## Background
 
