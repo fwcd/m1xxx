@@ -43,7 +43,7 @@ def main():
         if git_version:
             parts.append(git_version)
 
-    print('-'.join(parts))
+    print('.'.join(parts))
 
 if __name__ == '__main__':
     main()
