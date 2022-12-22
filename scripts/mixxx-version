@@ -12,6 +12,8 @@ CMAKELISTS_PATH = MIXXX_ROOT / 'CMakeLists.txt'
 def main():
     parser = argparse.ArgumentParser(description='Fetches the Mixxx version')
     parser.add_argument('-s', '--short', action='store_true', help='Only fetch the version number.')
+    parser.add_argument('-p', '--prerelease-suffix', action='store_true', help='Add the prerelease suffix.')
+    parser.add_argument('-n', '--nonmonotonic', action='store_false', dest='monotonic', help='Skip adding the Git commit count to ensure monotonicity.')
 
     args = parser.parse_args()
     parts = []
@@ -22,15 +24,22 @@ def main():
             version = re.search(r'^\s*project\(.+VERSION\s+(.+)\)\s*$', line)
             if version:
                 parts.append(version[1])
-            if not args.short:
+            if args.prerelease_suffix:
                 prerelease = re.search(r'^\s*set\(MIXXX_VERSION_PRERELEASE\s+"(.+)"\)', line)
                 if prerelease:
                     parts.append(prerelease[1])
+
+    # Read Git commit count for monotonicity
+    if not args.short or not args.monotonic:
+        git_output = subprocess.run(['git', 'rev-list', '--count', 'HEAD'], cwd=MIXXX_ROOT, capture_output=True, encoding='utf-8')
+        git_commit_count = git_output.stdout.strip()
+        if git_commit_count:
+            parts.append(git_commit_count)
     
     # Read Git version
     if not args.short:
-        git_output = subprocess.run(['git', 'rev-parse', '--short', 'HEAD'], cwd=MIXXX_ROOT, capture_output=True)
-        git_version = git_output.stdout.decode('utf-8')
+        git_output = subprocess.run(['git', 'rev-parse', '--short', 'HEAD'], cwd=MIXXX_ROOT, capture_output=True, encoding='utf-8')
+        git_version = git_output.stdout.strip()
         if git_version:
             parts.append(git_version)
 
