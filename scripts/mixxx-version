@@ -34,14 +34,14 @@ def main():
         git_output = subprocess.run(['git', 'rev-list', '--count', 'HEAD'], cwd=MIXXX_ROOT, capture_output=True, encoding='utf-8')
         git_commit_count = git_output.stdout.strip()
         if git_commit_count:
-            parts.append(git_commit_count)
+            parts.append(f'c{git_commit_count}')
     
     # Read Git version
     if not args.short:
         git_output = subprocess.run(['git', 'rev-parse', '--short', 'HEAD'], cwd=MIXXX_ROOT, capture_output=True, encoding='utf-8')
         git_version = git_output.stdout.strip()
         if git_version:
-            parts.append(git_version)
+            parts.append(f'r{git_version}')
 
     print('.'.join(parts))
 
