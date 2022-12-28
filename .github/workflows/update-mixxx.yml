@@ -13,6 +13,7 @@ jobs:
     steps:
     - uses: actions/checkout@v3
       with:
+        fetch-depth: '0' # to compute the monotonic version correctly
         submodules: true
     - name: Configure Git user
       run: |
