@@ -3,4 +3,4 @@
 set -e
 
 echo "==> Installing system dependencies with Homebrew..."
-brew install nasm automake ccache ninja
+brew install nasm automake ccache ninja pkg-config
