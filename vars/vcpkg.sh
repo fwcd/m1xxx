@@ -1,5 +1,7 @@
+rootdir=$(cd "$(dirname $0)/.." && pwd)
+
 if [ -z "$VCPKG_ROOT" ]; then
-  export VCPKG_ROOT="$(pwd)/vcpkg"
+  export VCPKG_ROOT="$rootdir/vcpkg"
 fi
 
 export VCPKG_OVERLAY_TRIPLETS="$VCPKG_ROOT/overlay/triplets"

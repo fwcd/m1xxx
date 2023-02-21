@@ -53,11 +53,10 @@ scripts/install-vcpkg-deps
 To build Mixxx, run:
 
 ```sh
-export VCPKG_ROOT="$(pwd)/vcpkg"
-export VCPKG_DEFAULT_TRIPLET=arm64-osx
+. vars/native-env.sh
 
 cd mixxx
-cmake -B build -G Ninja -DCMAKE_TOOLCHAIN_FILE="$VCPKG_ROOT/scripts/buildsystems/vcpkg.cmake"
+cmake -B build -G Ninja
 cmake --build build
 ```
 
