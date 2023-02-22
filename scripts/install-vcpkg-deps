@@ -22,6 +22,7 @@ TRIPLET_ARCHS = {
 # Packages to be built for the target architecture
 # Source: https://github.com/daschuer/vcpkg/blob/1023e7bdc915e9b69ce0dbdc2f750921e15d4499/.github/workflows/build.yml
 TARGET_PACKAGES = [
+    'ableton[hut,hutsilent]',
     'chromaprint',
     'fdk-aac',
     'ffmpeg',
