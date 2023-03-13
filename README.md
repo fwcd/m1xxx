@@ -23,7 +23,7 @@ This has the additional advantage of making it easy to upgrade or remove `m1xxx`
 
 Mixxx currently only provides builds for x86-64 macOS. While these run fine under Rosetta 2, native Mixxx builds for arm64 run at roughly half the CPU load and feel noticeably more snappy than the x86-64 version.
 
-Mixxx requires Qt 5.12 due to a breaking change in the OpenGL views that underpin waveform rendering, the first version of Qt that supports arm64 macOS, however, is 5.15. Therefore the linked `vcpkg` fork [backports the required patches](https://github.com/fwcd/vcpkg/tree/arm64-osx-mixxx/overlay/osx/qt5-base/patches) for supporting Qt 5.12 on arm64 macOS.
+Mixxx requires Qt 5.12 due to a breaking change in the OpenGL views that underpin waveform rendering, the first version of Qt that supports arm64 macOS, however, is 5.15. Therefore the linked `vcpkg` fork [backports the required patches](https://github.com/mixxxdj/vcpkg/tree/2.4/overlay/osx/qt5-base/patches) for supporting Qt 5.12 on arm64 macOS.
 
 In short, this repo builds Mixxx's dependencies, including a patched version of Qt, and Mixxx itself by cross-compiling to arm64 macOS in GitHub Actions.
 
