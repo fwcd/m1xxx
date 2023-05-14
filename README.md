@@ -2,6 +2,8 @@
 
 [![Build](https://github.com/fwcd/m1xxx/actions/workflows/build.yml/badge.svg)](https://github.com/fwcd/m1xxx/actions/workflows/build.yml)
 
+> NOTE: Official Apple Silicon snapshot builds of Mixxx are now available for download [here](https://mixxx.org/download/#testing)
+
 Unofficial Apple Silicon (arm64 macOS) builds of the free and open source DJ software [Mixxx](https://mixxx.org/).
 
 ![Screenshot](images/screenshot.png)
