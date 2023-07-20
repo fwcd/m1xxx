@@ -15,7 +15,7 @@ Unofficial Apple Silicon (arm64 macOS) builds of the free and open source DJ sof
 Alternatively you can install `m1xxx` via [Homebrew](https://brew.sh/) using
 
 ```sh
-brew tap fwcd/mixxx
+brew tap fwcd/fwcd
 brew install --cask m1xxx
 ```
 
