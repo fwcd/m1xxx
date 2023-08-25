@@ -66,7 +66,6 @@ PLATFORM_PACKAGES = {
     'osx': [
         'hss1394',
         'qtkeychain', # libgcrypt seems to be unsupported on iOS
-        'qt5-macextras',
     ],
 }
 
