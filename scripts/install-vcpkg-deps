@@ -65,7 +65,7 @@ TARGET_PACKAGES = [
 PLATFORM_PACKAGES = {
     'osx': [
         'hss1394',
-        'qtkeychain', # libgcrypt seems to be unsupported on iOS
+        'qtkeychain-qt6', # libgcrypt seems to be unsupported on iOS
     ],
 }
 
