@@ -87,6 +87,9 @@ def main():
     parser.add_argument('--skip-host-packages', action='store_true', help='Skip host-only packages built when crosscompiling.')
     parser.add_argument('--clean-after-build', action='store_true', help='Clean up buildtrees, packages and downloads after each build.')
     parser.add_argument('--vcpkg', type=Path, default=str(ROOT / 'scripts' / 'vcpkg'), help='The vcpkg binary to use.')
+    parser.add_argument('--graph', action=argparse.BooleanOptionalAction, default=False, help='Output the dependency graph.')
+    parser.add_argument('--remove', action=argparse.BooleanOptionalAction, default=True, help='Remove outdated packages.')
+    parser.add_argument('--install', action=argparse.BooleanOptionalAction, default=True, help='Install the dependencies.')
 
     args = parser.parse_args()
     host = args.host
@@ -116,21 +119,28 @@ def main():
         '--triplet', target,
     ]
 
-    print('==> Removing outdated packages...')
-    remove_flags = [
-        '--outdated',
-        '--recurse',
-        *(['--dry-run'] if args.dry_run else []),
-    ]
-    subprocess.run([str(vcpkg), 'remove', *vcpkg_flags, *remove_flags], check=True)
+    if args.graph:
+        print('==> Printing dependency graph...')
+        for package in packages:
+            subprocess.run([str(vcpkg), 'depend-info', '--format', 'tree', package], check=True)
 
-    print(f'==> Installing {len(packages)} packages...')
-    install_flags = [
-        '--recurse',
-        *(['--dry-run'] if args.dry_run else []),
-        *(['--clean-after-build'] if args.clean_after_build else []),
-    ]
-    subprocess.run([str(vcpkg), 'install', *vcpkg_flags, *install_flags, *packages], check=True)
+    if args.remove:
+        print('==> Removing outdated packages...')
+        remove_flags = [
+            '--outdated',
+            '--recurse',
+            *(['--dry-run'] if args.dry_run else []),
+        ]
+        subprocess.run([str(vcpkg), 'remove', *vcpkg_flags, *remove_flags], check=True)
+
+    if args.install:
+        print(f'==> Installing {len(packages)} packages...')
+        install_flags = [
+            '--recurse',
+            *(['--dry-run'] if args.dry_run else []),
+            *(['--clean-after-build'] if args.clean_after_build else []),
+        ]
+        subprocess.run([str(vcpkg), 'install', *vcpkg_flags, *install_flags, *packages], check=True)
 
 if __name__ == '__main__':
     main()
