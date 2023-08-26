@@ -58,7 +58,7 @@ To build Mixxx, run:
 . vars/native-env.sh
 
 cd mixxx
-cmake -B build -G Ninja
+cmake -B build -G Ninja -D QT6=ON
 cmake --build build
 ```
 
