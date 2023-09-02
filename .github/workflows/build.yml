@@ -116,7 +116,7 @@ jobs:
         name: mixxx-configurelogs
         path: ${{ env.MIXXX_ROOT }}/build/CMakeFiles/*.log
     - name: Build Mixxx
-      run: cmake --build build
+      run: cmake --build build --target mixxx
       working-directory: mixxx
     - name: Package Mixxx
       run: cpack -G DragNDrop -V && mv *.dmg "mixxx-${{ env.mixxx_version }}.dmg"
