@@ -2,7 +2,7 @@
 
 [![Build](https://github.com/fwcd/m1xxx/actions/workflows/build.yml/badge.svg)](https://github.com/fwcd/m1xxx/actions/workflows/build.yml)
 
-> **Note**: Official Apple Silicon snapshot builds of Mixxx are now available for download [here](https://mixxx.org/download/#testing)
+> **Note**: Official snapshot builds of Mixxx for Apple Silicon are now available for download [here](https://mixxx.org/download/#testing) and are recommended for most users.
 
 Unofficial Apple Silicon (arm64 macOS) builds of the free and open source DJ software [Mixxx](https://mixxx.org/).
 
@@ -23,11 +23,9 @@ This has the additional advantage of making it easy to upgrade or remove `m1xxx`
 
 ## Background
 
-Mixxx currently only provides builds for x86-64 macOS. While these run fine under Rosetta 2, native Mixxx builds for arm64 run at roughly half the CPU load and feel noticeably more snappy than the x86-64 version.
+Mixxx traditionally only provided builds for x86-64 macOS. While these run fine under Rosetta 2, native Mixxx builds for arm64 run at roughly half the CPU load and feel noticeably more snappy than the x86-64 version.
 
-Mixxx requires Qt 5.12 due to a breaking change in the OpenGL views that underpin waveform rendering, the first version of Qt that supports arm64 macOS, however, is 5.15. Therefore the linked `vcpkg` fork [backports the required patches](https://github.com/mixxxdj/vcpkg/tree/2.4/overlay/osx/qt5-base/patches) for supporting Qt 5.12 on arm64 macOS.
-
-In short, this repo builds Mixxx's dependencies, including a patched version of Qt, and Mixxx itself by cross-compiling to arm64 macOS in GitHub Actions.
+This repo provides native builds for arm64 that are cross-compiled from GitHub's x86-64 Actions runners.
 
 ## Upstreaming process
 
@@ -35,7 +33,7 @@ Both the `mixxx` and the `vcpkg` branch now use the official upstream revisions.
 
 ## Building natively on Apple Silicon (arm64 macOS) hosts
 
-While the CI workflows in this repo mainly deal with the case of cross-compiling Mixxx from x86_64 macOS runners to arm64, it is also possible to compile directly from an arm64 macOS (Apple Silicon) host.
+While the CI workflows in this repo mainly deal with the case of cross-compiling Mixxx from x86-64 macOS runners to arm64, it is also possible to compile directly from an arm64 macOS (Apple Silicon) host.
 
 First, make sure to have Homebrew installed and the submodules in this repo checked out (using `git submodule update`). To install the system dependencies, run:
 
