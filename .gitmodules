@@ -1,7 +1,7 @@
 [submodule "vcpkg"]
 	path = vcpkg
 	url = ../vcpkg.git
-	branch = mixxx/ios
+	branch = mixxx/ios-qt6
 [submodule "mixxx"]
 	path = mixxx
 	url = https://github.com/mixxxdj/mixxx.git
