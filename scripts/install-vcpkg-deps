@@ -49,7 +49,6 @@ TARGET_PACKAGES = [
     'protobuf',
     'pthreads',
     'qt5compat',
-    'qtbase',
     'qtdeclarative',
     'qtsvg',
     'qttranslations',
@@ -65,7 +64,12 @@ PLATFORM_PACKAGES = {
         'hss1394',
         'libusb', # Skip libusb for now since it does not support iOS officially (however there seem to be inofficial ports, which we could investigate)
         'rubberband', # Skip rubberband on iOS due to licensing issues (GPL) and build issues
+        'qtbase', # Build full Qt on macOS
         'qtkeychain-qt6', # libgcrypt seems to be unsupported on iOS
+    ],
+    'ios': [
+        # Skip OpenSSL and use OpenGL ES instead of OpenGL on iOS
+        'qtbase[brotli,concurrent,core,dbus,default-features,doubleconversion,freetype,gui,harfbuzz,icu,jpeg,network,gles2,pcre2,png,sql,sql-psql,sql-sqlite,testlib,thread,widgets,zstd]',
     ],
 }
 
