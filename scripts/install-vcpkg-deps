@@ -28,7 +28,6 @@ TARGET_PACKAGES = [
     'fdk-aac',
     'ffmpeg',
     'fftw3',
-    'grantlee',
     'gtest',
     'hidapi',
     'libdjinterop',
