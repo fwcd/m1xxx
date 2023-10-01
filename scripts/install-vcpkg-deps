@@ -87,7 +87,6 @@ def main():
     parser.add_argument('--skip-host-packages', action='store_true', help='Skip host-only packages built when crosscompiling.')
     parser.add_argument('--clean-after-build', action='store_true', help='Clean up buildtrees, packages and downloads after each build.')
     parser.add_argument('--vcpkg', type=Path, default=str(ROOT / 'scripts' / 'vcpkg'), help='The vcpkg binary to use.')
-    parser.add_argument('--graph', action=argparse.BooleanOptionalAction, default=False, help='Output the dependency graph.')
     parser.add_argument('--remove', action=argparse.BooleanOptionalAction, default=True, help='Remove outdated packages.')
     parser.add_argument('--install', action=argparse.BooleanOptionalAction, default=True, help='Install the dependencies.')
 
@@ -118,11 +117,6 @@ def main():
         '--host-triplet', host,
         '--triplet', target,
     ]
-
-    if args.graph:
-        print('==> Printing dependency graph...')
-        for package in packages:
-            subprocess.run([str(vcpkg), 'depend-info', '--format', 'tree', package], check=True)
 
     if args.remove:
         print('==> Removing outdated packages...')

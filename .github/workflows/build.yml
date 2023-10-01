@@ -57,8 +57,6 @@ jobs:
           vcpkg-installed-${{ env.VCPKG_DEFAULT_TRIPLET }}-${{ env.vcpkg_commit }}-
     - name: Check disk space
       run: df -h
-    - name: Output vcpkg dependency graph
-      run: ${{ env.SCRIPTS_ROOT }}/install-vcpkg-deps --graph --no-install --no-remove
     - name: Install vcpkg packages
       run: ${{ env.SCRIPTS_ROOT }}/install-vcpkg-deps
     - name: Upload vcpkg build logs
