@@ -50,11 +50,11 @@ TARGET_PACKAGES = [
     'portmidi',
     'protobuf',
     'pthreads',
-    'qt5compat',
-    'qtbase',
-    'qtdeclarative',
-    'qtsvg',
-    'qttranslations',
+    'qt5-base',
+    'qt5-declarative',
+    'qt5-script',
+    'qt5-svg',
+    'qt5-translations',
     'rubberband',
     'soundtouch',
     'taglib',
@@ -65,7 +65,8 @@ TARGET_PACKAGES = [
 PLATFORM_PACKAGES = {
     'osx': [
         'hss1394',
-        'qtkeychain-qt6', # libgcrypt seems to be unsupported on iOS
+        'qtkeychain', # libgcrypt seems to be unsupported on iOS
+        'qt5-macextras',
     ],
 }
 
