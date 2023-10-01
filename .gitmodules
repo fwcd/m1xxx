@@ -1,8 +1,8 @@
 [submodule "vcpkg"]
 	path = vcpkg
 	url = https://github.com/mixxxdj/vcpkg.git
-	branch = 2.5-rel
+	branch = 2.4
 [submodule "mixxx"]
 	path = mixxx
 	url = https://github.com/mixxxdj/mixxx.git
-	branch = main
+	branch = 2.4
