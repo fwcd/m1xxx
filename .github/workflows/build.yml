@@ -17,7 +17,7 @@ jobs:
       DEPS_BASE_NAME: mixxx-deps-arm64-macos
       ARTIFACT_BASE_NAME: mixxx-arm64-macos
       VCPKG_DEFAULT_TRIPLET: arm64-osx-min1100
-      VCPKG_DEFAULT_HOST_TRIPLET: x64-osx-min1015
+      VCPKG_DEFAULT_HOST_TRIPLET: x64-osx-min1012
       VCPKG_OVERLAY_TRIPLETS: vcpkg/overlay/triplets
       VCPKG_OVERLAY_PORTS: vcpkg/overlay/osx:vcpkg/overlay/ports
       VCPKG_ROOT: ${{ github.workspace }}/vcpkg
