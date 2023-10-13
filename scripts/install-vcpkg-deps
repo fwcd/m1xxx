@@ -10,13 +10,11 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
 
-TRIPLET_OSS = {
-    'Darwin': 'osx',
-}
-
-TRIPLET_ARCHS = {
-    'x86_64': 'x64',
-    'arm64': 'arm64',
+TRIPLETS = {
+    'Darwin': {
+        'x86_64': 'x64-osx-min1015',
+        'arm64': 'arm64-osx-min1100',
+    }
 }
 
 # Packages to be built for the target architecture
@@ -73,9 +71,7 @@ PLATFORM_PACKAGES = {
 HOST_PACKAGES = []
 
 def platform_triplet():
-    arch = TRIPLET_ARCHS.get(platform.machine(), None)
-    os = TRIPLET_OSS.get(platform.system(), None)
-    return '-'.join([arch, os]) if os and arch else None
+    return TRIPLETS.get(platform.system(), {}).get(platform.machine(), None)
 
 def main():
     default_triplet = platform_triplet()
