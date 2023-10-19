@@ -64,7 +64,7 @@ while read line; do
   if [[ $line =~ QT_HASH_qt$majorver-([a-zA-Z0-9]+)( *) ]]; then
     name="${BASH_REMATCH[1]}"
     spaces="${BASH_REMATCH[2]}"
-    archivename="qt$name-everywhere-src-$version.tar.xz"
+    archivename="qt$name-everywhere-opensource-src-$version.tar.xz"
     url="https://download.qt.io/archive/qt/$majorminorver/$version/submodules/$archivename"
     curl -sLO "$url"
     archivehash=$(sha512sum $archivename | cut -d " " -f 1)
