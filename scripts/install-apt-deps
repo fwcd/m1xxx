@@ -9,12 +9,13 @@ sudo apt-get install -y \
   autotools-dev \
   ccache \
   cmake \
-  nasm \
-  ninja-build \
   '^libxcb.*-dev' \
   libx11-xcb-dev \
   libglu1-mesa-dev \
   libxrender-dev \
   libxi-dev \
   libxkbcommon-dev \
-  libxkbcommon-x11-dev
+  libxkbcommon-x11-dev \
+  mesa-common-dev \
+  nasm \
+  ninja-build
