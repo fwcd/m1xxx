@@ -70,6 +70,9 @@ jobs:
         done
         echo "mixxx_version=$(scripts/mixxx-version)" >> "$GITHUB_ENV"
       shell: bash
+    - name: Set up Linux build environment
+      if: runner.os == 'Linux'
+      run: ${{ env.SCRIPTS_ROOT }}/install-apt-deps
     - name: Set up macOS build environment
       if: runner.os == 'macOS'
       run: |
