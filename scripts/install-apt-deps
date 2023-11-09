@@ -9,4 +9,4 @@ sudo apt-get install -y \
   ccache \
   cmake \
   nasm \
-  ninja
+  ninja-build
