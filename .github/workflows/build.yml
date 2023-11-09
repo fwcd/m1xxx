@@ -38,6 +38,14 @@ jobs:
           package_extension: dmg
           cmake_args: >-
             -DMACOS_BUNDLE=ON
+        - name: Linux (x86_64)
+          os: ubuntu-latest
+          triplet: x64-linux
+          host_triplet: x64-linux
+          overlay_ports: vcpkg/overlay/ports
+          cpack_generator: TGZ
+          package_extension: tar.gz
+          cmake_args: ''
 
     name: '${{ matrix.name }}'
     runs-on: '${{ matrix.os }}'
