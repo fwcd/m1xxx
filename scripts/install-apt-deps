@@ -14,6 +14,7 @@ sudo apt-get install -y \
   libgl1-mesa-dev \
   libglu1-mesa-dev \
   libudev-dev \
+  libupower-glib-dev \
   libxrender-dev \
   libxi-dev \
   libxkbcommon-dev \
