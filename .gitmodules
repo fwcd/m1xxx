@@ -4,5 +4,5 @@
 	branch = 2.5-rel
 [submodule "mixxx"]
 	path = mixxx
-	url = https://github.com/mixxxdj/mixxx.git
-	branch = main
+	url = https://github.com/fwcd/mixxx.git
+	branch = static-qt-xcb-plugin
