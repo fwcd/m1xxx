@@ -13,6 +13,7 @@ sudo apt-get install -y \
   libx11-xcb-dev \
   libgl1-mesa-dev \
   libglu1-mesa-dev \
+  libudev-dev \
   libxrender-dev \
   libxi-dev \
   libxkbcommon-dev \
