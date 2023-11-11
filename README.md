@@ -2,7 +2,8 @@
 
 [![Build](https://github.com/fwcd/m1xxx/actions/workflows/build.yml/badge.svg)](https://github.com/fwcd/m1xxx/actions/workflows/build.yml)
 
-> **Note**: Official snapshot builds of Mixxx for Apple Silicon are now available for download [here](https://mixxx.org/download/#testing). These are recommended for most users and can also be installed via Homebrew:
+> [!NOTE]
+> Official snapshot builds of Mixxx for Apple Silicon are now available for download [here](https://mixxx.org/download/#testing). These are recommended for most users and can also be installed via Homebrew:
 > ```bash
 > brew tap homebrew/cask-versions
 > brew install --cask mixxx-snapshot
@@ -52,7 +53,8 @@ scripts/bootstrap-vcpkg
 scripts/install-vcpkg-deps
 ```
 
-> Note: If vcpkg produces a 'missing Python' error message, make sure to have `python` on your PATH, e.g. by symlinking it to `python3` with `ln -s /opt/homebrew/bin/python3 /usr/local/bin/python`.
+> [!NOTE]
+> If vcpkg produces a 'missing Python' error message, make sure to have `python` on your PATH, e.g. by symlinking it to `python3` with `ln -s /opt/homebrew/bin/python3 /usr/local/bin/python`.
 
 To build Mixxx, run:
 
