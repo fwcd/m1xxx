@@ -42,7 +42,7 @@ jobs:
     name: '${{ matrix.name }}'
     runs-on: '${{ matrix.os }}'
     env:
-      DEPS_BASE_NAME: 'mixxx-deps-${{ matrix.triplet }}'
+      DEPS_BASE_NAME: 'deps-${{ matrix.triplet }}'
       ARTIFACT_BASE_NAME: 'mixxx-${{ matrix.triplet }}'
       VCPKG_DEFAULT_TRIPLET: '${{ matrix.triplet }}'
       VCPKG_DEFAULT_HOST_TRIPLET: '${{ matrix.host_triplet }}'
@@ -141,7 +141,7 @@ jobs:
       if: always()
       uses: actions/upload-artifact@v3
       with:
-        name: mixxx-configurelogs
+        name: configurelogs
         path: ${{ env.MIXXX_ROOT }}/build/CMakeFiles/*.log
     - name: Build Mixxx
       run: cmake --build build --target mixxx
@@ -159,6 +159,9 @@ jobs:
     if: github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
     needs: [build]
+
+    env:
+      PACKAGE_GLOB: 'mixxx-*'
 
     steps:
     - uses: actions/checkout@v4
@@ -179,4 +182,4 @@ jobs:
         version='${{ env.mixxx_version }}'
         tag="v$version"
         gh release create --title "$tag" "$tag" || true
-        gh release upload --clobber "$tag" '${{ env.MIXXX_ROOT }}'/build/*
+        gh release upload --clobber "$tag" '${{ env.MIXXX_ROOT }}'/build/${{ env.PACKAGE_GLOB }}
