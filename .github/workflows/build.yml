@@ -12,14 +12,28 @@ on:
 
 jobs:
   build:
-    runs-on: macos-11
+    strategy:
+      matrix:
+        include:
+        - name: macOS (arm64)
+          os: macos-11
+          triplet: arm64-osx-min1100
+          host_triplet: x64-osx-min1015
+          overlay_ports: vcpkg/overlay/osx:vcpkg/overlay/ports
+          cpack_generator: DragNDrop
+          package_extension: dmg
+          cmake_args: >-
+            -DMACOS_BUNDLE=ON
+
+    name: '${{ matrix.name }}'
+    runs-on: '${{ matrix.os }}'
     env:
-      DEPS_BASE_NAME: mixxx-deps-arm64-macos
-      ARTIFACT_BASE_NAME: mixxx-arm64-macos
-      VCPKG_DEFAULT_TRIPLET: arm64-osx-min1100
-      VCPKG_DEFAULT_HOST_TRIPLET: x64-osx-min1015
+      DEPS_BASE_NAME: 'mixxx-deps-${{ matrix.triplet }}'
+      ARTIFACT_BASE_NAME: 'mixxx-${{ matrix.triplet }}'
+      VCPKG_DEFAULT_TRIPLET: '${{ matrix.triplet }}'
+      VCPKG_DEFAULT_HOST_TRIPLET: '${{ matrix.host_triplet }}'
       VCPKG_OVERLAY_TRIPLETS: vcpkg/overlay/triplets
-      VCPKG_OVERLAY_PORTS: vcpkg/overlay/osx:vcpkg/overlay/ports
+      VCPKG_OVERLAY_PORTS: '${{ matrix.overlay_ports }}'
       VCPKG_ROOT: ${{ github.workspace }}/vcpkg
       MIXXX_ROOT: ${{ github.workspace }}/mixxx
       SCRIPTS_ROOT: ${{ github.workspace }}/scripts
@@ -37,7 +51,8 @@ jobs:
         done
         echo "mixxx_version=$(scripts/mixxx-version)" >> "$GITHUB_ENV"
       shell: bash
-    - name: Set up build environment
+    - name: Set up macOS build environment
+      if: runner.os == 'macOS'
       run: |
         ${{ env.SCRIPTS_ROOT }}/install-brew-deps
         xcrun --show-sdk-version
@@ -60,13 +75,19 @@ jobs:
     - name: Output vcpkg dependency graph
       run: ${{ env.SCRIPTS_ROOT }}/install-vcpkg-deps --graph --no-install --no-remove
     - name: Install vcpkg packages
-      run: ${{ env.SCRIPTS_ROOT }}/install-vcpkg-deps
+      run: ${{ env.SCRIPTS_ROOT }}/install-vcpkg-deps --clean-after-build
     - name: Upload vcpkg build logs
       if: always()
       uses: actions/upload-artifact@v3
       with:
-        name: vcpkg-buildlogs
+        name: 'vcpkg-buildlogs-${{ matrix.triplet }}'
         path: ${{ env.VCPKG_ROOT }}/buildtrees/**/*.log
+    - name: Save vcpkg cache
+      uses: actions/cache/save@v3
+      with:
+        # TODO: Share the key and the path with the previous step
+        path: ${{ env.VCPKG_ROOT }}/installed
+        key: vcpkg-installed-${{ env.VCPKG_DEFAULT_TRIPLET }}-${{ env.vcpkg_commit }}-${{ github.ref }}-${{ github.run_number }}
     
     # Export dependency archive to artifacts
 
@@ -102,15 +123,8 @@ jobs:
         -B build
         -DCMAKE_TOOLCHAIN_FILE=${{ env.VCPKG_ROOT }}/scripts/buildsystems/vcpkg.cmake
         -DCMAKE_BUILD_TYPE=RelWithDebInfo
-        -DMACOS_BUNDLE=ON
-        -DCMAKE_CROSSCOMPILING=1
-        -DRUN_HAVE_POSIX_REGEX=0
-        -DCMAKE_C_COMPILER=$(xcrun -find cc)
-        -DCMAKE_CXX_COMPILER=$(xcrun -find c++)
-        -DCMAKE_OSX_DEPLOYMENT_TARGET="11.0"
-        -DCMAKE_OSX_ARCHITECTURES=arm64
-        -DCMAKE_SYSTEM_PROCESSOR=arm64
         -DQT6=ON
+        ${{ matrix.cmake_args }}
       working-directory: mixxx
     - name: Upload Mixxx configuration logs
       if: always()
@@ -122,13 +136,13 @@ jobs:
       run: cmake --build build --target mixxx
       working-directory: mixxx
     - name: Package Mixxx
-      run: cpack -G DragNDrop -V && mv *.dmg "mixxx-${{ env.mixxx_version }}.dmg"
+      run: cpack -G ${{ matrix.cpack_generator }} -V && mv *.${{ matrix.package_extension }} "mixxx-${{ matrix.triplet }}-${{ env.mixxx_version }}.${{ matrix.package_extension }}"
       working-directory: mixxx/build
     - name: Upload packaged Mixxx binaries
       uses: actions/upload-artifact@v3
       with:
         name: ${{ env.ARTIFACT_BASE_NAME }}
-        path: ${{ env.MIXXX_ROOT }}/build/*.dmg
+        path: ${{ env.MIXXX_ROOT }}/build/*.${{ matrix.package_extension }}
     - name: Create tag
       if: github.ref == 'refs/heads/main'
       run: |
@@ -150,4 +164,4 @@ jobs:
       with:
         tag_name: ${{ env.tag }}
         name: ${{ env.mixxx_version }}
-        files: ${{ env.MIXXX_ROOT }}/build/*.dmg
+        files: ${{ env.MIXXX_ROOT }}/build/*.${{ matrix.package_extension }}
