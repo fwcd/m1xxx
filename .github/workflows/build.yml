@@ -45,7 +45,8 @@ jobs:
           overlay_ports: vcpkg/overlay/ports
           cpack_generator: TGZ
           package_extension: tar.gz
-          cmake_args: ''
+          cmake_args: >-
+            -DCMAKE_CXX_FLAGS='-lasound -ludev -fopenmp -lsleef'
 
     name: '${{ matrix.name }}'
     runs-on: '${{ matrix.os }}'
