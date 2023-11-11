@@ -24,6 +24,15 @@ jobs:
           package_extension: dmg
           cmake_args: >-
             -DMACOS_BUNDLE=ON
+        - name: macOS (x86_64)
+          os: macos-11
+          triplet: x64-osx-min1015
+          host_triplet: x64-osx-min1015
+          overlay_ports: vcpkg/overlay/osx:vcpkg/overlay/ports
+          cpack_generator: DragNDrop
+          package_extension: dmg
+          cmake_args: >-
+            -DMACOS_BUNDLE=ON
 
     name: '${{ matrix.name }}'
     runs-on: '${{ matrix.os }}'
