@@ -171,7 +171,7 @@ jobs:
     - name: Download artifacts for all builds
       uses: actions/download-artifact@v3
       with:
-        path: '${{ env.MIXXX_ROOT }}'/build
+        path: '${{ env.MIXXX_ROOT }}/build'
     - name: Create a release
       env:
         GH_TOKEN: ${{ github.token }}
