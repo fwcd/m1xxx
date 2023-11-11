@@ -9,6 +9,7 @@ sudo apt-get install -y \
   autotools-dev \
   ccache \
   cmake \
+  libasound2-dev \
   '^libxcb.*-dev' \
   libx11-xcb-dev \
   libgl1-mesa-dev \
