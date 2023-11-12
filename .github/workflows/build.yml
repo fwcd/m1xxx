@@ -25,6 +25,7 @@ jobs:
           triplet: arm64-osx-min1100
           host_triplet: x64-osx-min1015
           overlay_ports: vcpkg/overlay/osx:vcpkg/overlay/ports
+          ccache_path: ~/Library/Caches/ccache
           cpack_generator: DragNDrop
           package_extension: dmg
           cmake_args: >-
@@ -34,6 +35,7 @@ jobs:
           triplet: x64-osx-min1015
           host_triplet: x64-osx-min1015
           overlay_ports: vcpkg/overlay/osx:vcpkg/overlay/ports
+          ccache_path: ~/Library/Caches/ccache
           cpack_generator: DragNDrop
           package_extension: dmg
           cmake_args: >-
@@ -43,6 +45,7 @@ jobs:
           triplet: x64-linux
           host_triplet: x64-linux
           overlay_ports: vcpkg/overlay/ports
+          ccache_path: ~/.ccache
           cpack_generator: TGZ
           package_extension: tar.gz
           cmake_args: ''
@@ -132,7 +135,7 @@ jobs:
     - name: Set up build cache
       uses: actions/cache@v3
       with:
-        path: ${{ env.HOME }}/Library/Caches/ccache
+        path: ${{ matrix.ccache_path }}
         key: ccache-${{ env.mixxx_commit }}-${{ github.ref }}-${{ github.run_number }}
         restore-keys: |
           ccache-${{ env.mixxx_commit }}-${{ github.ref }}-
@@ -161,8 +164,8 @@ jobs:
       if: always()
       uses: actions/cache/save@v3
       with:
-        # TODO: Share the key and the path with the setup step
-        path: ${{ env.HOME }}/Library/Caches/ccache
+        # TODO: Share the key with the setup step
+        path: ${{ matrix.ccache_path }}
         key: ccache-${{ env.mixxx_commit }}-${{ github.ref }}-${{ github.run_number }}
     - name: Package Mixxx
       run: cpack -G ${{ matrix.cpack_generator }} -V && mv *.${{ matrix.package_extension }} "mixxx-${{ matrix.triplet }}-${{ env.mixxx_version }}.${{ matrix.package_extension }}"
