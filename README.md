@@ -9,7 +9,7 @@
 > brew install --cask mixxx-snapshot
 > ```
 
-Unofficial Apple Silicon (arm64 macOS) builds of the free and open source DJ software [Mixxx](https://mixxx.org/).
+Unofficial native arm64 (Apple Silicon M1/M2/...) and x86_64 (Intel) builds of the free and open source DJ software [Mixxx](https://mixxx.org/) for macOS.
 
 ![Screenshot](images/screenshot.png)
 
