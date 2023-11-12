@@ -157,6 +157,13 @@ jobs:
     - name: Build Mixxx
       run: cmake --build build --target mixxx
       working-directory: mixxx
+    - name: Save build cache
+      if: always()
+      uses: actions/cache/save@v3
+      with:
+        # TODO: Share the key and the path with the setup step
+        path: $HOME/Library/Caches/ccache
+        key: ccache-${{ env.mixxx_commit }}-${{ github.ref }}-${{ github.run_number }}
     - name: Package Mixxx
       run: cpack -G ${{ matrix.cpack_generator }} -V && mv *.${{ matrix.package_extension }} "mixxx-${{ matrix.triplet }}-${{ env.mixxx_version }}.${{ matrix.package_extension }}"
       working-directory: mixxx/build
