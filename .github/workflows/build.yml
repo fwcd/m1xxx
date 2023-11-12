@@ -212,6 +212,13 @@ jobs:
         # TODO: Share the key with the setup step
         path: ${{ matrix.ccache_path }}
         key: ccache-${{ matrix.triplet }}-${{ env.mixxx_commit }}-${{ github.ref }}-${{ github.run_number }}
+    - name: Work around race condition in CPack
+      if: runner.os == 'macOS'
+      run: |
+        # TODO: Replace this with a better solution
+        # See https://github.com/actions/runner-images/issues/7522
+        echo Killing XProtect...; sudo pkill -9 XProtect >/dev/null || true;
+        echo Waiting for XProtect process...; while pgrep XProtect; do sleep 3; done;
     - name: Package Mixxx
       if: matrix.package_extension && matrix.cpack_generator
       run: cpack -G ${{ matrix.cpack_generator }} -V && mv *.${{ matrix.package_extension }} "mixxx-${{ env.mixxx_version }}-${{ matrix.triplet }}${{ matrix.suffix }}.${{ matrix.package_extension }}"
