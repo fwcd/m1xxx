@@ -5,4 +5,4 @@
 [submodule "mixxx"]
 	path = mixxx
 	url = https://github.com/fwcd/mixxx.git
-	branch = static-qt-xcb-plugin
+	branch = linux-static
