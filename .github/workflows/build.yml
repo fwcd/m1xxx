@@ -95,10 +95,10 @@ jobs:
       with:
         path: ${{ env.VCPKG_ROOT }}/installed
         # TODO: Include hashed list of installed packages in key?
-        key: vcpkg-installed-${{ env.VCPKG_DEFAULT_TRIPLET }}-${{ env.vcpkg_commit }}-${{ github.ref }}-${{ github.run_number }}
+        key: vcpkg-installed-${{ matrix.os }}-${{ env.VCPKG_DEFAULT_TRIPLET }}-${{ env.vcpkg_commit }}-${{ github.ref }}-${{ github.run_number }}
         restore-keys: |
-          vcpkg-installed-${{ env.VCPKG_DEFAULT_TRIPLET }}-${{ env.vcpkg_commit }}-${{ github.ref }}-
-          vcpkg-installed-${{ env.VCPKG_DEFAULT_TRIPLET }}-${{ env.vcpkg_commit }}-
+          vcpkg-installed-${{ matrix.os }}-${{ env.VCPKG_DEFAULT_TRIPLET }}-${{ env.vcpkg_commit }}-${{ github.ref }}-
+          vcpkg-installed-${{ matrix.os }}-${{ env.VCPKG_DEFAULT_TRIPLET }}-${{ env.vcpkg_commit }}-
     - name: Check disk space
       run: df -h
     - name: Output vcpkg dependency graph
@@ -116,7 +116,7 @@ jobs:
       with:
         # TODO: Share the key and the path with the previous step
         path: ${{ env.VCPKG_ROOT }}/installed
-        key: vcpkg-installed-${{ env.VCPKG_DEFAULT_TRIPLET }}-${{ env.vcpkg_commit }}-${{ github.ref }}-${{ github.run_number }}
+        key: vcpkg-installed-${{ matrix.os }}-${{ env.VCPKG_DEFAULT_TRIPLET }}-${{ env.vcpkg_commit }}-${{ github.ref }}-${{ github.run_number }}
     
     # Export dependency archive to artifacts
 
