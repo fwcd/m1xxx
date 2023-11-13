@@ -25,6 +25,7 @@ jobs:
           triplet: arm64-osx-min1100
           host_triplet: x64-osx-min1015
           overlay_ports: vcpkg/overlay/osx:vcpkg/overlay/ports
+          ccache_path: ~/Library/Caches/ccache
           cpack_generator: DragNDrop
           package_extension: dmg
           cmake_args: >-
@@ -34,10 +35,24 @@ jobs:
           triplet: x64-osx-min1015
           host_triplet: x64-osx-min1015
           overlay_ports: vcpkg/overlay/osx:vcpkg/overlay/ports
+          ccache_path: ~/Library/Caches/ccache
           cpack_generator: DragNDrop
           package_extension: dmg
           cmake_args: >-
             -DMACOS_BUNDLE=ON
+        - name: Linux (x86_64)
+          os: ubuntu-latest
+          triplet: x64-linux
+          host_triplet: x64-linux
+          overlay_ports: vcpkg/overlay/ports
+          ccache_path: ~/.ccache
+          cpack_generator: TGZ
+          package_extension: tar.gz
+          # On Linux we build without battery support since this pulls in a
+          # dependency on GLib which is tricky to get right in a static linking scenario.
+          # See https://github.com/fwcd/m1xxx/pull/48#issuecomment-1807378063
+          cmake_args: >-
+            -DBATTERY=OFF
 
     name: '${{ matrix.name }}'
     runs-on: '${{ matrix.os }}'
@@ -62,6 +77,9 @@ jobs:
         done
         echo "mixxx_version=$(scripts/mixxx-version)" >> "$GITHUB_ENV"
       shell: bash
+    - name: Set up Linux build environment
+      if: runner.os == 'Linux'
+      run: ${{ env.SCRIPTS_ROOT }}/install-apt-deps
     - name: Set up macOS build environment
       if: runner.os == 'macOS'
       run: |
@@ -121,12 +139,12 @@ jobs:
     - name: Set up build cache
       uses: actions/cache@v3
       with:
-        path: $HOME/Library/Caches/ccache
-        key: ccache-${{ env.mixxx_commit }}-${{ github.ref }}-${{ github.run_number }}
+        path: ${{ matrix.ccache_path }}
+        key: ccache-${{ matrix.triplet }}-${{ env.mixxx_commit }}-${{ github.ref }}-${{ github.run_number }}
         restore-keys: |
-          ccache-${{ env.mixxx_commit }}-${{ github.ref }}-
-          ccache-${{ env.mixxx_commit }}-
-          ccache-
+          ccache-${{ matrix.triplet }}-${{ env.mixxx_commit }}-${{ github.ref }}-
+          ccache-${{ matrix.triplet }}-${{ env.mixxx_commit }}-
+          ccache-${{ matrix.triplet }}-
     - name: Configure Mixxx build
       run: >-
         cmake
@@ -146,6 +164,13 @@ jobs:
     - name: Build Mixxx
       run: cmake --build build --target mixxx
       working-directory: mixxx
+    - name: Save build cache
+      if: always()
+      uses: actions/cache/save@v3
+      with:
+        # TODO: Share the key with the setup step
+        path: ${{ matrix.ccache_path }}
+        key: ccache-${{ matrix.triplet }}-${{ env.mixxx_commit }}-${{ github.ref }}-${{ github.run_number }}
     - name: Package Mixxx
       run: cpack -G ${{ matrix.cpack_generator }} -V && mv *.${{ matrix.package_extension }} "mixxx-${{ matrix.triplet }}-${{ env.mixxx_version }}.${{ matrix.package_extension }}"
       working-directory: mixxx/build
