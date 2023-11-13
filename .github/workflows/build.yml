@@ -41,7 +41,7 @@ jobs:
           cmake_args: >-
             -DMACOS_BUNDLE=ON
         - name: Linux (x86_64)
-          os: ubuntu-latest
+          os: ubuntu-20.04
           triplet: x64-linux
           host_triplet: x64-linux
           overlay_ports: vcpkg/overlay/ports
