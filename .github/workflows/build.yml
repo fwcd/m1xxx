@@ -136,11 +136,11 @@ jobs:
       uses: actions/cache@v3
       with:
         path: ${{ matrix.ccache_path }}
-        key: ccache-${{ env.mixxx_commit }}-${{ github.ref }}-${{ github.run_number }}
+        key: ccache-${{ matrix.triplet }}-${{ env.mixxx_commit }}-${{ github.ref }}-${{ github.run_number }}
         restore-keys: |
-          ccache-${{ env.mixxx_commit }}-${{ github.ref }}-
-          ccache-${{ env.mixxx_commit }}-
-          ccache-
+          ccache-${{ matrix.triplet }}-${{ env.mixxx_commit }}-${{ github.ref }}-
+          ccache-${{ matrix.triplet }}-${{ env.mixxx_commit }}-
+          ccache-${{ matrix.triplet }}-
     - name: Configure Mixxx build
       run: >-
         cmake
@@ -166,7 +166,7 @@ jobs:
       with:
         # TODO: Share the key with the setup step
         path: ${{ matrix.ccache_path }}
-        key: ccache-${{ env.mixxx_commit }}-${{ github.ref }}-${{ github.run_number }}
+        key: ccache-${{ matrix.triplet }}-${{ env.mixxx_commit }}-${{ github.ref }}-${{ github.run_number }}
     - name: Package Mixxx
       run: cpack -G ${{ matrix.cpack_generator }} -V && mv *.${{ matrix.package_extension }} "mixxx-${{ matrix.triplet }}-${{ env.mixxx_version }}.${{ matrix.package_extension }}"
       working-directory: mixxx/build
