@@ -48,7 +48,11 @@ jobs:
           ccache_path: ~/.ccache
           cpack_generator: TGZ
           package_extension: tar.gz
-          cmake_args: ''
+          # On Linux we build without battery support since this pulls in a
+          # dependency on GLib which is tricky to get right in a static linking scenario.
+          # See https://github.com/fwcd/m1xxx/pull/48#issuecomment-1807378063
+          cmake_args: >-
+            -DBATTERY=OFF
 
     name: '${{ matrix.name }}'
     runs-on: '${{ matrix.os }}'
