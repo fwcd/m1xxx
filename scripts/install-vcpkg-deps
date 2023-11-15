@@ -24,7 +24,7 @@ TRIPLET_ARCHS = {
 # Packages to be built for the target architecture
 # Source: https://github.com/mixxxdj/vcpkg/blob/2.5-rel/.github/workflows/build.yml
 TARGET_PACKAGES = [
-    'ableton',
+    'ableton-link',
     'benchmark',
     'chromaprint',
     'fdk-aac',
