@@ -41,6 +41,11 @@ jobs:
       run: |
         ${{ env.SCRIPTS_ROOT }}/install-brew-deps
         xcrun --show-sdk-version
+    # python3-distutils is required for fontconfig but it has been removed in Python 3.12
+    - name: Set up Python 3.11
+      uses: actions/setup-python@v4
+      with:
+          python-version: '3.11'
 
     # Build dependencies
 
