@@ -30,3 +30,23 @@ sudo apt-get install -y \
   mesa-common-dev \
   nasm \
   ninja-build
+
+host="$VCPKG_DEFAULT_HOST_TRIPLET"
+target="$VCPKG_DEFAULT_TRIPLET"
+
+if [[ -n "$host" && -n "$target" && "$host" != "$target" ]]; then
+  echo "==> Determining cross-compilation tools for $target..."
+  cross_pkgs=()
+  case "$target" in
+    arm64-linux) 
+      cross_pkgs+=(gcc-aarch64-linux-gnu)
+      ;;
+    *)
+      echo "Unsupported target triplet: $target"
+      exit 1
+      ;;
+  esac
+
+  echo "==> Installing cross-compilation tools with APT..."
+  sudo apt-get install -y "${cross_pkgs[@]}"
+fi
