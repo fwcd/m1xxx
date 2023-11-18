@@ -7,46 +7,60 @@ if ! command -v apt-get >/dev/null; then
   exit 1
 fi
 
-echo "==> Installing system dependencies with APT..."
+triplet_to_arch() {
+  if [ -n "$1" ]; then
+    case "$1" in
+      x64-*) echo amd64;;
+      arm64-*) echo aarch64;;
+      *)
+        echo "Unsupported triplet: $1"
+        return 1
+        ;;
+    esac
+  fi
+}
+
+echo "==> Updating APT..."
 sudo apt-get update
-sudo apt-get install -y \
-  autoconf-archive \
-  autotools-dev \
-  ccache \
-  cmake \
-  libasound2-dev \
-  '^libxcb.*-dev' \
-  libx11-xcb-dev \
-  libgl1-mesa-dev \
-  libglu1-mesa-dev \
-  libsleef-dev \
-  libudev-dev \
-  libupower-glib-dev \
-  libtool \
-  libxrender-dev \
-  libxi-dev \
-  libxkbcommon-dev \
-  libxkbcommon-x11-dev \
-  mesa-common-dev \
-  nasm \
+
+echo "==> Installing host dependencies with APT..."
+host_deps=(
+  autoconf-archive
+  autotools-dev
+  ccache
+  cmake
+  libtool
+  nasm
   ninja-build
+)
+sudo apt-get install -y "${host_deps[@]}"
 
-host="$VCPKG_DEFAULT_HOST_TRIPLET"
-target="$VCPKG_DEFAULT_TRIPLET"
+host_arch="$(triplet_to_arch "$VCPKG_DEFAULT_HOST_TRIPLET")"
+target_arch="$(triplet_to_arch "$VCPKG_DEFAULT_TRIPLET")"
 
-if [[ -n "$host" && -n "$target" && "$host" != "$target" ]]; then
-  echo "==> Determining cross-compilation tools for $target..."
-  cross_pkgs=()
-  case "$target" in
-    arm64-linux) 
-      cross_pkgs+=(gcc-aarch64-linux-gnu g++-aarch64-linux-gnu)
-      ;;
-    *)
-      echo "Unsupported target triplet: $target"
-      exit 1
-      ;;
-  esac
-
+if [[ -n "$host_arch" && -n "$target_arch" && "$host_arch" != "$target_arch" ]]; then
   echo "==> Installing cross-compilation tools with APT..."
-  sudo apt-get install -y "${cross_pkgs[@]}"
+  sudo apt-get install -y "g++-$target_arch-linux-gnu"
+
+  echo "==> Adding architecture $target_arch to dpkg..."
+  sudo dpkg --add-architecture "$target_arch"
+  sudo apt-get update
 fi
+
+echo "==> Installing target dependencies with APT..."
+target_deps=(
+  libasound2-dev
+  '^libxcb.*-dev'
+  libx11-xcb-dev
+  libgl1-mesa-dev
+  libglu1-mesa-dev
+  libsleef-dev
+  libudev-dev
+  libupower-glib-dev
+  libxrender-dev
+  libxi-dev
+  libxkbcommon-dev
+  libxkbcommon-x11-dev
+  mesa-common-dev
+)
+sudo apt-get install -y "${target_deps/%/:$target_arch}"
