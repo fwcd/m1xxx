@@ -27,6 +27,15 @@ triplet_to_gcc_arch() {
   fi
 }
 
+deb_arch_to_mirror() {
+  if [ -n "$1" ]; then
+    case "$1" in
+      amd64|i386) echo "http://archive.ubuntu.com/ubuntu";;
+      *) echo "http://ports.ubuntu.com/ubuntu-ports";;
+    esac
+  fi
+}
+
 echo "==> Updating APT..."
 sudo apt-get update
 
@@ -47,12 +56,15 @@ target="$VCPKG_DEFAULT_TRIPLET"
 
 target_deb_arch="$(triplet_to_deb_arch "$target")"
 target_gcc_arch="$(triplet_to_gcc_arch "$target")"
+target_mirror="$(deb_arch_to_mirror "$target_deb_arch")"
 
 if [[ -n "$host" && -n "$target" && "$host" != "$target" ]]; then
   echo "==> Installing cross-compilation tools with APT..."
   sudo apt-get install -y "g++-$target_gcc_arch-linux-gnu"
 
-  echo "==> Adding target architecture to dpkg..."
+  echo "==> Adding target architecture to APT..."
+  ubuntu_version="$(cat /etc/os-release | grep VERSION_CODENAME | cut -d '=' -f 2-)"
+  echo "deb [arch=$target_deb_arch] $target_mirror $ubuntu_version main multiverse universe" >> /etc/apt/sources.list
   sudo dpkg --add-architecture "$target_deb_arch"
   sudo apt-get update
 fi
