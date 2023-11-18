@@ -39,7 +39,7 @@ if [[ -n "$host" && -n "$target" && "$host" != "$target" ]]; then
   cross_pkgs=()
   case "$target" in
     arm64-linux) 
-      cross_pkgs+=(gcc-aarch64-linux-gnu)
+      cross_pkgs+=(gcc-aarch64-linux-gnu g++-aarch64-linux-gnu)
       ;;
     *)
       echo "Unsupported target triplet: $target"
