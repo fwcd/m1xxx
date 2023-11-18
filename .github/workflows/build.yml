@@ -110,7 +110,7 @@ jobs:
       ARTIFACT_BASE_NAME: 'mixxx-${{ matrix.triplet }}${{ matrix.suffix }}'
       VCPKG_DEFAULT_TRIPLET: '${{ matrix.triplet }}'
       VCPKG_DEFAULT_HOST_TRIPLET: '${{ matrix.host_triplet }}'
-      VCPKG_OVERLAY_TRIPLETS: vcpkg/overlay/triplets
+      VCPKG_OVERLAY_TRIPLETS: overlay/triplets:vcpkg/overlay/triplets
       VCPKG_OVERLAY_PORTS: '${{ matrix.overlay_ports }}'
     
     steps:
