@@ -11,7 +11,7 @@ triplet_to_arch() {
   if [ -n "$1" ]; then
     case "$1" in
       x64-*) echo amd64;;
-      arm64-*) echo aarch64;;
+      arm64-*) echo arm64;;
       *)
         echo "Unsupported triplet: $1"
         return 1
