@@ -92,6 +92,16 @@ jobs:
           cmake_args: >-
             -DDEBUG_ASSERTIONS_FATAL=ON
             -DBATTERY=OFF
+        - name: Linux (arm64)
+          os: ubuntu-latest
+          triplet: arm64-linux-release
+          host_triplet: x64-linux-release
+          overlay_ports: vcpkg/overlay/ports
+          ccache_path: ~/.ccache
+          cpack_generator: TGZ
+          package_extension: tar.gz
+          cmake_args: >-
+            -DBATTERY=OFF
 
     name: '${{ matrix.name }}'
     runs-on: '${{ matrix.os }}'
