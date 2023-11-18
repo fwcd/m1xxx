@@ -79,11 +79,11 @@ jobs:
       shell: bash
     - name: Set up Linux build environment
       if: runner.os == 'Linux'
-      run: ${{ env.SCRIPTS_ROOT }}/install-apt-deps
+      run: ${{ env.SCRIPTS_ROOT }}/install-ubuntu-deps
     - name: Set up macOS build environment
       if: runner.os == 'macOS'
       run: |
-        ${{ env.SCRIPTS_ROOT }}/install-brew-deps
+        ${{ env.SCRIPTS_ROOT }}/install-macos-deps
         xcrun --show-sdk-version
 
     # Build dependencies

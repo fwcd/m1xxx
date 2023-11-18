@@ -2,6 +2,11 @@
 
 set -e
 
+if ! command -v apt-get >/dev/null; then
+  echo "Please make sure to run on a system with 'apt-get' on the PATH!"
+  exit 1
+fi
+
 echo "==> Installing system dependencies with APT..."
 sudo apt-get update
 sudo apt-get install -y \
