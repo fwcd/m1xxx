@@ -67,7 +67,7 @@ if [[ -n "$host" && -n "$target" && "$host" != "$target" ]]; then
     echo "==> Adding target mirror to APT sources..."
     ubuntu_version="$(cat /etc/os-release | grep VERSION_CODENAME | cut -d '=' -f 2-)"
     sudo sed -i "s/deb \([a-z]\)/deb [arch=$host_deb_arch] \1/" /etc/apt/sources.list
-    sudo bash -c "{ echo 'deb [arch=$target_deb_arch] $target_mirror $ubuntu_version main multiverse universe'; cat /etc/apt/sources.list; } > /etc/apt/sources.list.new"
+    sudo bash -c "{ for repo_suffix in '' '-updates'; do echo 'deb [arch=$target_deb_arch] $target_mirror $ubuntu_version$repo_suffix main multiverse universe'; done; cat /etc/apt/sources.list; } > /etc/apt/sources.list.new"
     sudo mv /etc/apt/sources.list{.new,}
     cat /etc/apt/sources.list
 
