@@ -54,7 +54,7 @@ sudo apt-get install -y "${host_deps[@]}"
 host="$VCPKG_DEFAULT_HOST_TRIPLET"
 target="$VCPKG_DEFAULT_TRIPLET"
 
-host_deb_arch="$(trplet_to_deb_arch "$host")"
+host_deb_arch="$(triplet_to_deb_arch "$host")"
 target_deb_arch="$(triplet_to_deb_arch "$target")"
 target_gcc_arch="$(triplet_to_gcc_arch "$target")"
 target_mirror="$(deb_arch_to_mirror "$target_deb_arch")"
