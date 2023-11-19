@@ -93,4 +93,8 @@ target_deps=(
   libxkbcommon-x11-dev
   mesa-common-dev
 )
-sudo apt-get install -y "${target_deps/%/:$target_deb_arch}"
+if [ -n "$target_deb_arch" ]; then
+  sudo apt-get install -y "${target_deps[@]/%/:$target_deb_arch}"
+else
+  sudo apt-get install -y "${target_deps[@]}"
+fi
