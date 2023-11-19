@@ -54,6 +54,7 @@ sudo apt-get install -y "${host_deps[@]}"
 host="$VCPKG_DEFAULT_HOST_TRIPLET"
 target="$VCPKG_DEFAULT_TRIPLET"
 
+host_deb_arch="$(trplet_to_deb_arch "$host")"
 target_deb_arch="$(triplet_to_deb_arch "$target")"
 target_gcc_arch="$(triplet_to_gcc_arch "$target")"
 target_mirror="$(deb_arch_to_mirror "$target_deb_arch")"
@@ -62,12 +63,18 @@ if [[ -n "$host" && -n "$target" && "$host" != "$target" ]]; then
   echo "==> Installing cross-compilation tools with APT..."
   sudo apt-get install -y "g++-$target_gcc_arch-linux-gnu"
 
-  echo "==> Adding target architecture to APT..."
-  ubuntu_version="$(cat /etc/os-release | grep VERSION_CODENAME | cut -d '=' -f 2-)"
-  sudo bash -c "{ echo 'deb [arch=$target_deb_arch] $target_mirror $ubuntu_version main multiverse universe'; cat /etc/apt/sources.list; } > /etc/apt/sources.list.new"
-  sudo mv /etc/apt/sources.list{.new,}
-  sudo dpkg --add-architecture "$target_deb_arch"
-  sudo apt-get update
+  if [ -z "$(dpkg --print-foreign-architectures | grep "$target_arch")" ]; then
+    echo "==> Adding target mirror to APT sources..."
+    ubuntu_version="$(cat /etc/os-release | grep VERSION_CODENAME | cut -d '=' -f 2-)"
+    sudo sed -i "s/deb http/deb [arch=$host_deb_arch] http/" /etc/apt/sources.list
+    sudo bash -c "{ echo 'deb [arch=$target_deb_arch] $target_mirror $ubuntu_version main multiverse universe'; cat /etc/apt/sources.list; } > /etc/apt/sources.list.new"
+    sudo mv /etc/apt/sources.list{.new,}
+    cat /etc/apt/sources.list
+
+    echo "==> Adding target architecture to APT..."
+    sudo dpkg --add-architecture "$target_deb_arch"
+    sudo apt-get update
+  fi
 fi
 
 echo "==> Installing target dependencies with APT..."
