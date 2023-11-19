@@ -94,7 +94,9 @@ target_deps=(
   mesa-common-dev
 )
 if [ -n "$target_deb_arch" ]; then
-  sudo apt-get install -y "${target_deps[@]/%/:$target_deb_arch}"
+  # We need the packages for the host architecture too, since some packages
+  # (e.g. Qt) have to be built for the host too during cross compilation
+  sudo apt-get install -y "${target_deps[@]}" "${target_deps[@]/%/:$target_deb_arch}"
 else
   sudo apt-get install -y "${target_deps[@]}"
 fi
