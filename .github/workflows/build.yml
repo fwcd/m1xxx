@@ -23,8 +23,8 @@ jobs:
         - name: macOS (arm64)
           os: macos-11
           suffix: ''
-          triplet: arm64-osx-min1100
-          host_triplet: x64-osx-min1015
+          triplet: arm64-osx-min1100-release
+          host_triplet: x64-osx-min1015-release
           overlay_ports: vcpkg/overlay/osx:vcpkg/overlay/ports
           ccache_path: ~/Library/Caches/ccache
           cpack_generator: DragNDrop
@@ -34,8 +34,8 @@ jobs:
         - name: macOS (x86_64)
           os: macos-11
           suffix: ''
-          triplet: x64-osx-min1015
-          host_triplet: x64-osx-min1015
+          triplet: x64-osx-min1015-release
+          host_triplet: x64-osx-min1015-release
           overlay_ports: vcpkg/overlay/osx:vcpkg/overlay/ports
           ccache_path: ~/Library/Caches/ccache
           cpack_generator: DragNDrop
@@ -45,8 +45,8 @@ jobs:
         - name: macOS (arm64, Debug Assertions)
           os: macos-11
           suffix: '-debugasserts'
-          triplet: arm64-osx-min1100
-          host_triplet: x64-osx-min1015
+          triplet: arm64-osx-min1100-release
+          host_triplet: x64-osx-min1015-release
           overlay_ports: vcpkg/overlay/osx:vcpkg/overlay/ports
           ccache_path: ~/Library/Caches/ccache
           cpack_generator: DragNDrop
@@ -57,8 +57,8 @@ jobs:
         - name: macOS (x86_64, Debug Assertions)
           os: macos-11
           suffix: '-debugasserts'
-          triplet: x64-osx-min1015
-          host_triplet: x64-osx-min1015
+          triplet: x64-osx-min1015-release
+          host_triplet: x64-osx-min1015-release
           overlay_ports: vcpkg/overlay/osx:vcpkg/overlay/ports
           ccache_path: ~/Library/Caches/ccache
           cpack_generator: DragNDrop
@@ -66,6 +66,32 @@ jobs:
           cmake_args: >-
             -DDEBUG_ASSERTIONS_FATAL=ON
             -DMACOS_BUNDLE=ON
+        - name: Linux (x86_64)
+          os: ubuntu-latest
+          suffix: ''
+          triplet: x64-linux-release
+          host_triplet: x64-linux-release
+          overlay_ports: vcpkg/overlay/ports
+          ccache_path: ~/.ccache
+          cpack_generator: TGZ
+          package_extension: tar.gz
+          # On Linux we build without battery support since this pulls in a
+          # dependency on GLib which is tricky to get right in a static linking scenario.
+          # See https://github.com/fwcd/m1xxx/pull/48#issuecomment-1807378063
+          cmake_args: >-
+            -DBATTERY=OFF
+        - name: Linux (x86_64, Debug Assertions)
+          os: ubuntu-latest
+          suffix: '-debugasserts'
+          triplet: x64-linux-release
+          host_triplet: x64-linux-release
+          overlay_ports: vcpkg/overlay/ports
+          ccache_path: ~/.ccache
+          cpack_generator: TGZ
+          package_extension: tar.gz
+          cmake_args: >-
+            -DDEBUG_ASSERTIONS_FATAL=ON
+            -DBATTERY=OFF
 
     name: '${{ matrix.name }}'
     runs-on: '${{ matrix.os }}'
