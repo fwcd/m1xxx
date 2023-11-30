@@ -68,6 +68,7 @@ jobs:
             -DMACOS_BUNDLE=ON
         - name: Linux (x86_64)
           os: ubuntu-latest
+          suffix: ''
           triplet: x64-linux-release
           host_triplet: x64-linux-release
           overlay_ports: vcpkg/overlay/ports
@@ -81,6 +82,7 @@ jobs:
             -DBATTERY=OFF
         - name: Linux (x86_64, Debug Assertions)
           os: ubuntu-latest
+          suffix: '-debugasserts'
           triplet: x64-linux-release
           host_triplet: x64-linux-release
           overlay_ports: vcpkg/overlay/ports
