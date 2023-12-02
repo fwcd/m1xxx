@@ -167,13 +167,6 @@ jobs:
         -B build
         -DCMAKE_TOOLCHAIN_FILE=${{ env.VCPKG_ROOT }}/scripts/buildsystems/vcpkg.cmake
         -DCMAKE_BUILD_TYPE=RelWithDebInfo
-        -DCMAKE_CROSSCOMPILING=1
-        -DRUN_HAVE_POSIX_REGEX=0
-        -DCMAKE_C_COMPILER=$(xcrun -find cc)
-        -DCMAKE_CXX_COMPILER=$(xcrun -find c++)
-        -DCMAKE_OSX_DEPLOYMENT_TARGET="11.0"
-        -DCMAKE_OSX_ARCHITECTURES=arm64
-        -DCMAKE_SYSTEM_PROCESSOR=arm64
         -DQT6=OFF
       working-directory: mixxx
     - name: Upload Mixxx configuration logs
