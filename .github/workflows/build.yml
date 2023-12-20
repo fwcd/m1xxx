@@ -249,4 +249,4 @@ jobs:
         version='${{ env.mixxx_version }}'
         tag="v$version"
         gh release create --title "$tag" "$tag" || true
-        gh release upload --clobber "$tag" '${{ env.MIXXX_ROOT }}'/build/${{ env.PACKAGE_GLOB }}
+        gh release upload "$tag" '${{ env.MIXXX_ROOT }}'/build/${{ env.PACKAGE_GLOB }} || true
