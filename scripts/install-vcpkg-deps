@@ -72,10 +72,10 @@ PLATFORM_PACKAGES = {
 # Packages to be built for the host architecture when crosscompiling
 HOST_PACKAGES = []
 
-def platform_triplet():
+def platform_triplet(release: bool=True):
     arch = TRIPLET_ARCHS.get(platform.machine(), None)
     os = TRIPLET_OSS.get(platform.system(), None)
-    return '-'.join([arch, os]) if os and arch else None
+    return '-'.join([arch, os, *(['release'] if release else [])]) if os and arch else None
 
 def main():
     default_triplet = platform_triplet()
