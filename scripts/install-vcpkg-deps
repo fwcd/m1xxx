@@ -68,8 +68,8 @@ PLATFORM_PACKAGES = {
         'qtkeychain-qt6', # libgcrypt seems to be unsupported on iOS
     ],
     'ios': [
-        # Skip OpenSSL and use OpenGL ES instead of OpenGL on iOS
-        'qtbase[brotli,concurrent,core,dbus,default-features,doubleconversion,freetype,gui,harfbuzz,icu,jpeg,network,gles2,pcre2,png,sql,sql-psql,sql-sqlite,testlib,thread,widgets,zstd]',
+        # Skip OpenSSL and use OpenGL ES on iOS
+        'qtbase[brotli,concurrent,core,dbus,default-features,doubleconversion,freetype,gui,harfbuzz,icu,jpeg,network,opengl,gles2,gles3,pcre2,png,sql,sql-psql,sql-sqlite,testlib,thread,widgets,zstd]',
     ],
 }
 
