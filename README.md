@@ -91,6 +91,7 @@ source vars/ios-sdkroot.sh
 cd mixxx
 cmake -B build \
       -G Xcode \
+      -DCMAKE_BUILD_TYPE=RelWithDebInfo \
       -DCMAKE_SYSROOT="$SDKROOT" \
       -DCMAKE_SYSTEM_NAME=iOS \
       -DCMAKE_TOOLCHAIN_FILE="$VCPKG_ROOT/scripts/buildsystems/vcpkg.cmake" \
