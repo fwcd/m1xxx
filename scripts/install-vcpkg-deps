@@ -69,7 +69,7 @@ PLATFORM_PACKAGES = {
     ],
     'ios': [
         # Skip OpenSSL and use OpenGL ES on iOS
-        'qtbase[brotli,concurrent,core,dbus,default-features,doubleconversion,freetype,gui,harfbuzz,icu,jpeg,network,opengl,gles2,gles3,pcre2,png,sql,sql-psql,sql-sqlite,testlib,thread,widgets,zstd]',
+        'qtbase[brotli,concurrent,core,dbus,default-features,doubleconversion,freetype,gui,harfbuzz,icu,jpeg,network,opengl,gles2,gles3,pcre2,png,sql,sql-sqlite,testlib,thread,widgets,zstd]',
     ],
 }
 
