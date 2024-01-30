@@ -92,6 +92,16 @@ jobs:
           cmake_args: >-
             -DDEBUG_ASSERTIONS_FATAL=ON
             -DBATTERY=OFF
+        - name: Linux (arm64)
+          os: ubuntu-latest
+          triplet: arm64-linux-release
+          host_triplet: x64-linux-release
+          overlay_ports: vcpkg/overlay/ports
+          ccache_path: ~/.ccache
+          cpack_generator: TGZ
+          package_extension: tar.gz
+          cmake_args: >-
+            -DBATTERY=OFF
 
     name: '${{ matrix.name }}'
     runs-on: '${{ matrix.os }}'
@@ -100,7 +110,7 @@ jobs:
       ARTIFACT_BASE_NAME: 'mixxx-${{ matrix.triplet }}${{ matrix.suffix }}'
       VCPKG_DEFAULT_TRIPLET: '${{ matrix.triplet }}'
       VCPKG_DEFAULT_HOST_TRIPLET: '${{ matrix.host_triplet }}'
-      VCPKG_OVERLAY_TRIPLETS: vcpkg/overlay/triplets
+      VCPKG_OVERLAY_TRIPLETS: overlay/triplets:vcpkg/overlay/triplets
       VCPKG_OVERLAY_PORTS: '${{ matrix.overlay_ports }}'
     
     steps:
