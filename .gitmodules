@@ -5,4 +5,4 @@
 [submodule "mixxx"]
 	path = mixxx
 	url = ../mixxx.git
-	branch = ios-qt6
+	branch = ios
