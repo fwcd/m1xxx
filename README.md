@@ -72,14 +72,13 @@ To build for iOS, install the system dependencies as above, make sure the submod
 
 ```sh
 scripts/bootstrap-vcpkg
-scripts/install-vcpkg-deps --skip-host-packages --host arm64-osx-release --target arm64-ios-release
+scripts/install-vcpkg-deps --target arm64-ios-release
 ```
 
 To configure Mixxx, run:
 
 ```sh
 export VCPKG_ROOT="$PWD/vcpkg"
-export VCPKG_DEFAULT_HOST_TRIPLET=arm64-osx-release
 export VCPKG_DEFAULT_TRIPLET=arm64-ios-release
 
 # NOTE: This script should not be sourced before the vcpkg dependencies have
@@ -93,7 +92,6 @@ cmake -B build \
       -G Xcode \
       -DCMAKE_BUILD_TYPE=RelWithDebInfo \
       -DCMAKE_SYSROOT="$SDKROOT" \
-      -DCMAKE_SYSTEM_NAME=iOS \
       -DCMAKE_TOOLCHAIN_FILE="$VCPKG_ROOT/scripts/buildsystems/vcpkg.cmake" \
       -DRUBBERBAND=OFF \
       -DQTKEYCHAIN=OFF \
