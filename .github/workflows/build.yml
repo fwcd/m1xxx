@@ -165,9 +165,10 @@ jobs:
       run: >-
         ${{ env.SCRIPTS_ROOT }}/vcpkg export
         --x-all-installed
+        --x-install-root="${{ env.VCPKG_ROOT }}/installed"
         --zip
         --output="${{ env.DEPS_BASE_NAME }}-${{ env.vcpkg_commit_short }}"
-        --output-dir=${{ env.VCPKG_ROOT }}
+        --output-dir="${{ env.VCPKG_ROOT }}"
     - name: Upload vcpkg archive
       if: matrix.suffix == ''
       uses: actions/upload-artifact@v3
