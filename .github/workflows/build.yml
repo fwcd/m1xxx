@@ -161,6 +161,7 @@ jobs:
 
     - name: Export vcpkg archive
       if: matrix.suffix == ''
+      working-directory: ${{ env.VCPKG_ROOT }}
       run: >-
         ${{ env.SCRIPTS_ROOT }}/vcpkg export
         --x-all-installed
