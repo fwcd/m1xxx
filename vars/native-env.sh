@@ -1,4 +1,4 @@
-varsdir=$(cd "$(dirname $0)" && pwd)
+varsdir=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 
 source "$varsdir/vcpkg.sh"
 
