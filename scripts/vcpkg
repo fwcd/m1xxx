@@ -1,8 +1,7 @@
 #!/bin/bash
 
-cd "$(dirname $0)/.."
 set -e
 
-source vars/vcpkg.sh
+source "$(dirname $0)/../vars/vcpkg.sh"
 
 "$VCPKG_ROOT/vcpkg" "$@"

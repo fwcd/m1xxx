@@ -7,85 +7,27 @@ import subprocess
 import sys
 
 from pathlib import Path
+from tempfile import TemporaryDirectory
 
 ROOT = Path(__file__).resolve().parent.parent
 
 TRIPLET_OSS = {
     'Darwin': 'osx',
+    'Linux': 'linux',
 }
 
 TRIPLET_ARCHS = {
     'x86_64': 'x64',
     'arm64': 'arm64',
+    'aarch64': 'arm64',
 }
 
-# Packages to be built for the target architecture
-# Source: https://github.com/mixxxdj/vcpkg/blob/2.5-rel/.github/workflows/build.yml
-TARGET_PACKAGES = [
-    'ableton',
-    'benchmark',
-    'chromaprint',
-    'fdk-aac',
-    'ffmpeg',
-    'fftw3',
-    'gtest',
-    'libdjinterop',
-    'libebur128',
-    'libflac',
-    'libkeyfinder',
-    'libmodplug',
-    'libogg',
-    'libopusenc',
-    'libsndfile[core]',
-    'libvorbis',
-    'lilv',
-    'mp3lame',
-    'ms-gsl',
-    'opus',
-    'opusfile',
-    'portaudio[asio]',
-    'portmidi',
-    'protobuf',
-    'pthreads',
-    'qtdeclarative',
-    'qt5compat',
-    'qtsvg',
-    'qttranslations',
-    'soundtouch',
-    'taglib',
-    'wavpack',
-]
-
-# Packages to be built only when compiling for a given target os
-PLATFORM_PACKAGES = {
-    'osx': [
-        'hidapi', # Depends on libusb
-        'hss1394',
-        'libusb', # Skip libusb for now since it does not support iOS officially (however there seem to be inofficial ports, which we could investigate)
-        'rubberband', # Skip rubberband on iOS due to licensing issues (GPL) and build issues
-        'qtbase', # Build full Qt on macOS
-        'qtkeychain-qt6', # libgcrypt seems to be unsupported on iOS
-        'grantlee', # on iOS: ld: Undefined symbols: _main, referenced from: user_main_trampoline() in libqios.a[arm64][6](qioseventdispatcher.mm.o)
-    ],
-    'ios': [
-        # Skip OpenSSL and use OpenGL ES on iOS
-        'qtbase[brotli,concurrent,core,dbus,default-features,doubleconversion,freetype,gui,harfbuzz,icu,jpeg,network,opengl,gles2,gles3,pcre2,png,sql,sql-sqlite,testlib,thread,widgets,zstd]',
-    ],
-}
-
-# Packages to be built for the host architecture when crosscompiling
-HOST_PACKAGES = []
-
-def platform_triplet():
+def platform_triplet(release: bool=True):
     arch = TRIPLET_ARCHS.get(platform.machine(), None)
     os = TRIPLET_OSS.get(platform.system(), None)
-    return '-'.join([arch, os]) if os and arch else None
+    return '-'.join([arch, os, *(['release'] if release else [])]) if os and arch else None
 
 def main():
-    # Disable stack traces, they usually only cause noise and obscure the actual build errors
-    # (which usually happen at a higher level somewhere in vcpkg's call stack)
-    sys.tracebacklimit = 0
-
     default_triplet = platform_triplet()
 
     parser = argparse.ArgumentParser(description="Builds and installs Mixxx's dependencies in the vcpkg tree")
@@ -94,7 +36,9 @@ def main():
     parser.add_argument('--dry-run', action='store_true', help='Do not actually build/install.')
     parser.add_argument('--skip-host-packages', action='store_true', help='Skip host-only packages built when crosscompiling.')
     parser.add_argument('--clean-after-build', action='store_true', help='Clean up buildtrees, packages and downloads after each build.')
-    parser.add_argument('--vcpkg', type=Path, default=str(ROOT / 'scripts' / 'vcpkg'), help='The vcpkg binary to use.')
+    parser.add_argument('--vcpkg', type=Path, default=ROOT / 'scripts' / 'vcpkg', help='The vcpkg binary to use.')
+    parser.add_argument('--install-root', type=Path, default=ROOT / 'vcpkg' / 'installed', help="The install root for vcpkg.")
+    parser.add_argument('--manifest-root', type=Path, default=ROOT / 'vcpkg', help="The directory containing Mixxx's vcpkg.json.")
     parser.add_argument('--graph', action=argparse.BooleanOptionalAction, default=False, help='Output the dependency graph.')
     parser.add_argument('--remove', action=argparse.BooleanOptionalAction, default=True, help='Remove outdated packages.')
     parser.add_argument('--install', action=argparse.BooleanOptionalAction, default=True, help='Install the dependencies.')
@@ -102,9 +46,9 @@ def main():
     args = parser.parse_args()
     host = args.host
     target = args.target
-    is_crosscompiling = host != target
-    build_host_packages = is_crosscompiling and not args.skip_host_packages
     vcpkg = args.vcpkg
+    manifest_root = args.manifest_root
+    install_root = args.install_root
 
     if not host:
         print('No host triplet!')
@@ -117,20 +61,26 @@ def main():
     print(f'Host triplet:   {host}')
     print(f'Target triplet: {target}')
 
-    target_os = target.split('-')[1]
-
-    host_packages = [f'{pkg}:{host}' for pkg in HOST_PACKAGES] if build_host_packages else []
-    platform_packages = PLATFORM_PACKAGES.get(target_os, [])
-    packages = TARGET_PACKAGES + platform_packages + host_packages
     vcpkg_flags = [
         '--host-triplet', host,
         '--triplet', target,
+        '--x-install-root', install_root,
     ]
 
     if args.graph:
         print('==> Printing dependency graph...')
-        for package in packages:
-            subprocess.run([str(vcpkg), 'depend-info', '--format', 'tree', package], check=True)
+        # Workaround for https://github.com/microsoft/vcpkg/issues/36520
+        with TemporaryDirectory(prefix='m1xxx-dependency-graph-') as tmp:
+            tmp_path = Path(tmp)
+            tmp_ports_path = tmp_path / 'ports'
+            tmp_port_name = 'mixxx'
+            tmp_ports_path.mkdir()
+            (tmp_ports_path / tmp_port_name).symlink_to(manifest_root)
+            depend_info_flags = [
+                '--format', 'tree',
+                '--overlay-ports', str(tmp_ports_path),
+            ]
+            subprocess.run([str(vcpkg), 'depend-info', *depend_info_flags, tmp_port_name], check=True, cwd=tmp_ports_path)
 
     if args.remove:
         print('==> Removing outdated packages...')
@@ -142,13 +92,13 @@ def main():
         subprocess.run([str(vcpkg), 'remove', *vcpkg_flags, *remove_flags], check=True)
 
     if args.install:
-        print(f'==> Installing {len(packages)} packages...')
+        print(f'==> Installing dependencies...')
         install_flags = [
             '--recurse',
             *(['--dry-run'] if args.dry_run else []),
             *(['--clean-after-build'] if args.clean_after_build else []),
         ]
-        subprocess.run([str(vcpkg), 'install', *vcpkg_flags, *install_flags, *packages], check=True)
+        subprocess.run([str(vcpkg), 'install', *vcpkg_flags, *install_flags], check=True, cwd=manifest_root)
 
 if __name__ == '__main__':
     main()

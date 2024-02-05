@@ -1,0 +1,6 @@
+branch update:
+  - mixxx
+  - vcpkg
+
+ci-cd:
+  - .github/workflows/**

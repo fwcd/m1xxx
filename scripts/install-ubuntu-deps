@@ -1,0 +1,32 @@
+#!/bin/bash
+
+set -e
+
+if ! command -v apt-get >/dev/null; then
+  echo "Please make sure to run on a system with 'apt-get' on the PATH!"
+  exit 1
+fi
+
+echo "==> Installing system dependencies with APT..."
+sudo apt-get update
+sudo apt-get install -y \
+  autoconf-archive \
+  autotools-dev \
+  ccache \
+  cmake \
+  libasound2-dev \
+  '^libxcb.*-dev' \
+  libx11-xcb-dev \
+  libgl1-mesa-dev \
+  libglu1-mesa-dev \
+  libsleef-dev \
+  libudev-dev \
+  libupower-glib-dev \
+  libtool \
+  libxrender-dev \
+  libxi-dev \
+  libxkbcommon-dev \
+  libxkbcommon-x11-dev \
+  mesa-common-dev \
+  nasm \
+  ninja-build
