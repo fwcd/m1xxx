@@ -37,7 +37,8 @@ def main():
     parser.add_argument('--skip-host-packages', action='store_true', help='Skip host-only packages built when crosscompiling.')
     parser.add_argument('--clean-after-build', action='store_true', help='Clean up buildtrees, packages and downloads after each build.')
     parser.add_argument('--vcpkg', type=Path, default=ROOT / 'scripts' / 'vcpkg', help='The vcpkg binary to use.')
-    parser.add_argument('--manifest-dir', type=Path, default=ROOT / 'vcpkg', help="The directory containing Mixxx's vcpkg.json.")
+    parser.add_argument('--install-root', type=Path, default=ROOT / 'vcpkg' / 'installed', help="The install root for vcpkg.")
+    parser.add_argument('--manifest-root', type=Path, default=ROOT / 'vcpkg', help="The directory containing Mixxx's vcpkg.json.")
     parser.add_argument('--graph', action=argparse.BooleanOptionalAction, default=False, help='Output the dependency graph.')
     parser.add_argument('--remove', action=argparse.BooleanOptionalAction, default=True, help='Remove outdated packages.')
     parser.add_argument('--install', action=argparse.BooleanOptionalAction, default=True, help='Install the dependencies.')
@@ -46,7 +47,8 @@ def main():
     host = args.host
     target = args.target
     vcpkg = args.vcpkg
-    manifest_dir = args.manifest_dir
+    manifest_root = args.manifest_root
+    install_root = args.install_root
 
     if not host:
         print('No host triplet!')
@@ -62,6 +64,7 @@ def main():
     vcpkg_flags = [
         '--host-triplet', host,
         '--triplet', target,
+        '--x-install-root', install_root,
     ]
 
     if args.graph:
@@ -72,7 +75,7 @@ def main():
             tmp_ports_path = tmp_path / 'ports'
             tmp_port_name = 'mixxx'
             tmp_ports_path.mkdir()
-            (tmp_ports_path / tmp_port_name).symlink_to(manifest_dir)
+            (tmp_ports_path / tmp_port_name).symlink_to(manifest_root)
             depend_info_flags = [
                 '--format', 'tree',
                 '--overlay-ports', str(tmp_ports_path),
@@ -95,7 +98,7 @@ def main():
             *(['--dry-run'] if args.dry_run else []),
             *(['--clean-after-build'] if args.clean_after_build else []),
         ]
-        subprocess.run([str(vcpkg), 'install', *vcpkg_flags, *install_flags], check=True, cwd=manifest_dir)
+        subprocess.run([str(vcpkg), 'install', *vcpkg_flags, *install_flags], check=True, cwd=manifest_root)
 
 if __name__ == '__main__':
     main()
