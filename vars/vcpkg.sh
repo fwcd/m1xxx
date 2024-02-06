@@ -1,4 +1,4 @@
-rootdir=$(cd "$(dirname $0)/.." && pwd)
+rootdir=$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)
 
 if [ -z "$VCPKG_ROOT" ]; then
   export VCPKG_ROOT="$rootdir/vcpkg"
