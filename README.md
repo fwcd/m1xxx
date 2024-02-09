@@ -75,6 +75,12 @@ scripts/bootstrap-vcpkg
 scripts/install-vcpkg-deps --target arm64-ios-release
 ```
 
+> [!TIP]
+> You can also (experimentally) build with Qt 5 using
+> ```sh
+> scripts/install-vcpkg-deps --qt5 --target arm64-ios-release
+> ```
+
 To configure Mixxx, run:
 
 ```sh
