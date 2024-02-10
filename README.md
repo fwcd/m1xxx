@@ -105,6 +105,9 @@ cmake -B build \
       -DHID=OFF
 ```
 
+> [!TIP]
+> For Qt 5, set `-DQT6=OFF`
+
 The Xcode project at `build/mixxx.xcodeproj` should then contain an iOS target for Mixxx.
 
 ## Credits
