@@ -1,0 +1,6 @@
+#!/bin/sh
+
+cd "$(dirname $0)/.."
+set -e
+
+(cd mixxx && cmake --build build)
