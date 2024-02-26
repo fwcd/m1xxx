@@ -3,6 +3,4 @@
 cd "$(dirname $0)/.."
 set -e
 
-source vars/vcpkg.sh
-
-"$VCPKG_ROOT/bootstrap-vcpkg.sh" -disableMetrics
+"vcpkg/bootstrap-vcpkg.sh" -disableMetrics
