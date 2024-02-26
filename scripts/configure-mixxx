@@ -16,12 +16,14 @@ def main():
     default_triplet = platform_triplet()
 
     parser = argparse.ArgumentParser(description="Configures Mixxx for building")
+    parser.add_argument('--build-type', type=str, default='RelWithDebInfo', help='The CMake build type')
     parser.add_argument('--target', type=str, default=os.getenv('VCPKG_DEFAULT_TRIPLET', default_triplet), help='The target triplet to use.')
     parser.add_argument('--dry-run', action='store_true', help='Do not actually configure.')
     parser.add_argument('--vcpkg-root', type=Path, default=ROOT / 'vcpkg', help='The vcpkg repository.')
     parser.add_argument('--mixxx-root', type=Path, default=ROOT / 'mixxx', help='The mixxx repository.')
 
     args = parser.parse_args()
+    build_type = args.build_type
     dry_run = args.dry_run
     target = args.target
     vcpkg_root = args.vcpkg_root
@@ -36,6 +38,7 @@ def main():
     cmake_invocation = [
         'cmake',
         '-B', str(mixxx_root / 'build'),
+        '-D', f'CMAKE_BUILD_TYPE={build_type}',
     ]
     cmake_env = {
         'MIXXX_VCPKG_ROOT': str(vcpkg_root),
