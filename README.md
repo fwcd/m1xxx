@@ -57,11 +57,8 @@ scripts/install-vcpkg-deps
 To build Mixxx, run:
 
 ```sh
-. vars/native-env.sh
-
-cd mixxx
-cmake -B build -G Ninja -D QT6=ON
-cmake --build build
+scripts/configure-mixxx
+scripts/build-mixxx
 ```
 
 ## Building for iOS (WIP)
