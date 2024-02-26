@@ -59,11 +59,8 @@ scripts/install-vcpkg-deps
 To build Mixxx, run:
 
 ```sh
-. vars/native-env.sh
-
-cd mixxx
-cmake -B build -G Ninja
-cmake --build build
+scripts/configure-mixxx
+scripts/build-mixxx
 ```
 
 ## Credits
