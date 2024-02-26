@@ -1,0 +1,63 @@
+#!/usr/bin/env python3
+
+import argparse
+import os
+import subprocess
+import sys
+
+from helpers.triplet import platform_triplet
+
+from pathlib import Path
+from tempfile import TemporaryDirectory
+
+ROOT = Path(__file__).resolve().parent.parent
+
+def main():
+    default_triplet = platform_triplet()
+
+    parser = argparse.ArgumentParser(description="Configures Mixxx for building")
+    parser.add_argument('--target', type=str, default=os.getenv('VCPKG_DEFAULT_TRIPLET', default_triplet), help='The target triplet to use.')
+    parser.add_argument('--dry-run', action='store_true', help='Do not actually configure.')
+    parser.add_argument('--vcpkg-root', type=Path, default=ROOT / 'vcpkg', help='The vcpkg repository.')
+    parser.add_argument('--mixxx-root', type=Path, default=ROOT / 'mixxx', help='The mixxx repository.')
+
+    args = parser.parse_args()
+    dry_run = args.dry_run
+    target = args.target
+    vcpkg_root = args.vcpkg_root
+    mixxx_root = args.mixxx_root
+
+    if not target:
+        print('No target triplet!')
+        sys.exit(1)
+
+    print(f'Target triplet: {target}')
+
+    cmake_invocation = [
+        'cmake',
+        '-B', str(mixxx_root / 'build'),
+    ]
+    cmake_env = {
+        'MIXXX_VCPKG_ROOT': str(vcpkg_root),
+        'VCPKG_DEFAULT_TRIPLET': target,
+    }
+
+    if dry_run:
+        print('\n'.join([
+            f'Would run',
+            f"  {' '.join(cmake_invocation)}",
+            f'with env',
+            *(f'  {k}="{v}"' for k, v in cmake_env.items()),
+        ]))
+    else:
+        subprocess.run(
+            cmake_invocation,
+            cwd=mixxx_root,
+            env={
+                **os.environ,
+                **cmake_env,
+            }
+        )
+
+if __name__ == '__main__':
+    main()
