@@ -182,14 +182,7 @@ jobs:
           ccache-${{ matrix.triplet }}-${{ env.mixxx_commit }}-
           ccache-${{ matrix.triplet }}-
     - name: Configure Mixxx build
-      run: >-
-        cmake
-        -G Ninja
-        -B build
-        -DCMAKE_TOOLCHAIN_FILE=${{ env.VCPKG_ROOT }}/scripts/buildsystems/vcpkg.cmake
-        -DCMAKE_BUILD_TYPE=RelWithDebInfo
-        -DQT6=ON
-        ${{ matrix.cmake_args }}
+      run: ${{ env.SCRIPTS_ROOT }}/configure-mixxx -- ${{ matrix.cmake_args }}
       working-directory: mixxx
     - name: Upload Mixxx configuration logs
       if: always()
@@ -198,7 +191,7 @@ jobs:
         name: configurelogs
         path: ${{ env.MIXXX_ROOT }}/build/CMakeFiles/*.log
     - name: Build Mixxx
-      run: cmake --build build --target mixxx
+      run: ${{ env.SCRIPTS_ROOT }}/build-mixxx
       working-directory: mixxx
     - name: Save build cache
       if: always()

@@ -2,6 +2,4 @@
 
 set -e
 
-source "$(dirname $0)/../vars/vcpkg.sh"
-
-"$VCPKG_ROOT/vcpkg" "$@"
+"$(dirname $0)/../vcpkg/vcpkg" "$@"
