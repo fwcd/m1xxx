@@ -122,6 +122,8 @@ jobs:
       run: |
         ${{ env.SCRIPTS_ROOT }}/install-macos-deps
         sudo xcode-select -s /Applications/Xcode_15.2.app
+        echo "==> Build environment"
+        uname -a
         xcode-select -p
         xcrun --show-sdk-version
 
