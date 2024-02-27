@@ -21,6 +21,7 @@ def main():
     parser.add_argument('--dry-run', action='store_true', help='Do not actually configure.')
     parser.add_argument('--vcpkg-root', type=Path, default=ROOT / 'vcpkg', help='The vcpkg repository.')
     parser.add_argument('--mixxx-root', type=Path, default=ROOT / 'mixxx', help='The mixxx repository.')
+    parser.add_argument('--qt5', action='store_true', help='Build with Qt 5')
     parser.add_argument('extra_cmake_args', nargs='*', help='Extra arguments to the cmake invocation.')
 
     args = parser.parse_args()
@@ -29,6 +30,7 @@ def main():
     target = args.target
     vcpkg_root = args.vcpkg_root
     mixxx_root = args.mixxx_root
+    qt5 = args.qt5
     extra_cmake_args = args.extra_cmake_args
 
     if not target:
@@ -41,6 +43,7 @@ def main():
         'cmake',
         '-B', str(mixxx_root / 'build'),
         '-D', f'CMAKE_BUILD_TYPE={build_type}',
+        '-D', f"QT6={'OFF' if qt5 else 'ON'}",
         *extra_cmake_args,
     ]
     cmake_env = {
