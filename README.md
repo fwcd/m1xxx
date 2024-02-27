@@ -42,7 +42,7 @@ While the CI workflows in this repo mainly deal with the case of cross-compiling
 First, make sure to have Homebrew installed and the submodules in this repo checked out (using `git submodule update`). To install the system dependencies, run:
 
 ```sh
-scripts/install-brew-deps
+scripts/install-macos-deps
 ```
 
 To compile and install Mixxx's dependencies into `vcpkg` run:
