@@ -20,12 +20,17 @@ jobs:
     strategy:
       matrix:
         include:
+        - name: macOS (iOS)
+          os: macos-11
+          suffix: ''
+          triplet: arm64-ios-release
+          host_triplet: x64-osx-min1015-release
+          ccache_path: ~/Library/Caches/ccache
         - name: macOS (arm64)
           os: macos-11
           suffix: ''
           triplet: arm64-osx-min1100-release
           host_triplet: x64-osx-min1015-release
-          overlay_ports: vcpkg/overlay/osx:vcpkg/overlay/ports
           ccache_path: ~/Library/Caches/ccache
           cpack_generator: DragNDrop
           package_extension: dmg
@@ -36,7 +41,6 @@ jobs:
           suffix: ''
           triplet: x64-osx-min1015-release
           host_triplet: x64-osx-min1015-release
-          overlay_ports: vcpkg/overlay/osx:vcpkg/overlay/ports
           ccache_path: ~/Library/Caches/ccache
           cpack_generator: DragNDrop
           package_extension: dmg
@@ -47,7 +51,6 @@ jobs:
           suffix: '-debugasserts'
           triplet: arm64-osx-min1100-release
           host_triplet: x64-osx-min1015-release
-          overlay_ports: vcpkg/overlay/osx:vcpkg/overlay/ports
           ccache_path: ~/Library/Caches/ccache
           cpack_generator: DragNDrop
           package_extension: dmg
@@ -59,7 +62,6 @@ jobs:
           suffix: '-debugasserts'
           triplet: x64-osx-min1015-release
           host_triplet: x64-osx-min1015-release
-          overlay_ports: vcpkg/overlay/osx:vcpkg/overlay/ports
           ccache_path: ~/Library/Caches/ccache
           cpack_generator: DragNDrop
           package_extension: dmg
@@ -71,7 +73,6 @@ jobs:
           suffix: ''
           triplet: x64-linux-release
           host_triplet: x64-linux-release
-          overlay_ports: vcpkg/overlay/ports
           ccache_path: ~/.ccache
           cpack_generator: TGZ
           package_extension: tar.gz
@@ -85,7 +86,6 @@ jobs:
           suffix: '-debugasserts'
           triplet: x64-linux-release
           host_triplet: x64-linux-release
-          overlay_ports: vcpkg/overlay/ports
           ccache_path: ~/.ccache
           cpack_generator: TGZ
           package_extension: tar.gz
@@ -100,8 +100,6 @@ jobs:
       ARTIFACT_BASE_NAME: 'mixxx-${{ matrix.triplet }}${{ matrix.suffix }}'
       VCPKG_DEFAULT_TRIPLET: '${{ matrix.triplet }}'
       VCPKG_DEFAULT_HOST_TRIPLET: '${{ matrix.host_triplet }}'
-      VCPKG_OVERLAY_TRIPLETS: vcpkg/overlay/triplets
-      VCPKG_OVERLAY_PORTS: '${{ matrix.overlay_ports }}'
     
     steps:
     - uses: actions/checkout@v4
@@ -161,11 +159,14 @@ jobs:
 
     - name: Export vcpkg archive
       if: matrix.suffix == ''
+      working-directory: ${{ env.VCPKG_ROOT }}
       run: >-
         ${{ env.SCRIPTS_ROOT }}/vcpkg export
         --x-all-installed
+        --x-install-root="${{ env.VCPKG_ROOT }}/installed"
         --zip
         --output="${{ env.DEPS_BASE_NAME }}-${{ env.vcpkg_commit_short }}"
+        --output-dir="${{ env.VCPKG_ROOT }}"
     - name: Upload vcpkg archive
       if: matrix.suffix == ''
       uses: actions/upload-artifact@v3
@@ -206,9 +207,11 @@ jobs:
         path: ${{ matrix.ccache_path }}
         key: ccache-${{ matrix.triplet }}-${{ env.mixxx_commit }}-${{ github.ref }}-${{ github.run_number }}
     - name: Package Mixxx
+      if: matrix.package_extension && matrix.cpack_generator
       run: cpack -G ${{ matrix.cpack_generator }} -V && mv *.${{ matrix.package_extension }} "mixxx-${{ env.mixxx_version }}-${{ matrix.triplet }}${{ matrix.suffix }}.${{ matrix.package_extension }}"
       working-directory: mixxx/build
     - name: Upload packaged Mixxx binaries
+      if: matrix.package_extension && matrix.cpack_generator
       uses: actions/upload-artifact@v3
       with:
         name: ${{ env.ARTIFACT_BASE_NAME }}
