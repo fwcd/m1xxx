@@ -81,29 +81,11 @@ scripts/install-vcpkg-deps --target arm64-ios-release
 To configure Mixxx, run:
 
 ```sh
-export VCPKG_ROOT="$PWD/vcpkg"
-export VCPKG_DEFAULT_TRIPLET=arm64-ios-release
-
-# NOTE: This script should not be sourced before the vcpkg dependencies have
-#       been installed, otherwise the Qt host tools will implicitly be
-#       built with the iOS sysroot rather than the macOS sysroot and throw
-#       linker errors.
-source vars/ios-sdkroot.sh
-
-cd mixxx
-cmake -B build \
-      -G Xcode \
-      -DCMAKE_BUILD_TYPE=RelWithDebInfo \
-      -DCMAKE_SYSROOT="$SDKROOT" \
-      -DCMAKE_TOOLCHAIN_FILE="$VCPKG_ROOT/scripts/buildsystems/vcpkg.cmake" \
-      -DRUBBERBAND=OFF \
-      -DQTKEYCHAIN=OFF \
-      -DBATTERY=OFF \
-      -DHID=OFF
+scripts/configure-mixxx --target arm64-ios-release
 ```
 
 > [!TIP]
-> For Qt 5, set `-DQT6=OFF`
+> To (experimentally) build with Qt 5, set `--qt5`
 
 The Xcode project at `build/mixxx.xcodeproj` should then contain an iOS target for Mixxx.
 
