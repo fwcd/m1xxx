@@ -16,6 +16,7 @@ def main():
     default_triplet = platform_triplet()
 
     parser = argparse.ArgumentParser(description="Configures Mixxx for building")
+    parser.add_argument('-G', '--generator', type=str, help='The CMake generator')
     parser.add_argument('--build-type', type=str, default='RelWithDebInfo', help='The CMake build type')
     parser.add_argument('--target', type=str, default=os.getenv('VCPKG_DEFAULT_TRIPLET', default_triplet), help='The target triplet to use.')
     parser.add_argument('--dry-run', action='store_true', help='Do not actually configure.')
@@ -37,13 +38,23 @@ def main():
         print('No target triplet!')
         sys.exit(1)
 
+    ios = '-ios' in target
+    generator = args.generator or ('Xcode' if ios else 'Ninja')
+
     print(f'Target triplet: {target}')
 
     cmake_invocation = [
         'cmake',
+        '-G', generator,
         '-B', str(mixxx_root / 'build'),
         '-D', f'CMAKE_BUILD_TYPE={build_type}',
         '-D', f"QT6={'OFF' if qt5 else 'ON'}",
+        *([
+            '-D', 'RUBBERBAND=OFF',
+            '-D', 'QTKEYCHAIN=OFF',
+            '-D', 'BATTERY=OFF',
+            '-D', 'HID=OFF',
+        ] if ios else []),
         *extra_cmake_args,
     ]
     cmake_env = {
