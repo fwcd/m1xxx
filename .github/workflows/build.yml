@@ -121,6 +121,8 @@ jobs:
       if: runner.os == 'macOS'
       run: |
         ${{ env.SCRIPTS_ROOT }}/install-macos-deps
+        xcode-select -s /Applications/Xcode_15.2.app
+        xcode-select -p
         xcrun --show-sdk-version
 
     # Build dependencies
