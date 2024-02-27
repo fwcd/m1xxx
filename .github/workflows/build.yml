@@ -107,6 +107,8 @@ jobs:
       with:
         fetch-depth: '0' # to compute the monotonic version correctly
         submodules: true
+    - name: Output runner info
+      run: uname -a
     - name: Fetch versions and paths
       run: |
         for mod in "${{ env.VCPKG_ROOT }}" "${{ env.MIXXX_ROOT }}"; do
@@ -124,7 +126,6 @@ jobs:
         ${{ env.SCRIPTS_ROOT }}/install-macos-deps
         sudo xcode-select -s "${{ env.XCODE_ROOT }}"
         echo "==> Build environment"
-        uname -a
         xcode-select -p
         xcrun --show-sdk-version
 
