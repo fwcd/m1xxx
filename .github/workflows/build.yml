@@ -20,7 +20,7 @@ jobs:
     strategy:
       matrix:
         include:
-        - name: macOS (iOS)
+        - name: iOS (arm64)
           os: macos-11
           suffix: ''
           triplet: arm64-ios-release
