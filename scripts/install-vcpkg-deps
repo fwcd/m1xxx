@@ -22,6 +22,7 @@ def main():
     parser.add_argument('--skip-host-packages', action='store_true', help='Skip host-only packages built when crosscompiling.')
     parser.add_argument('--clean-after-build', action='store_true', help='Clean up buildtrees, packages and downloads after each build.')
     parser.add_argument('--vcpkg-root', type=Path, default=ROOT / 'vcpkg', help='The vcpkg repository.')
+    parser.add_argument('--qt5', action='store_true', help='Build with Qt 5')
     parser.add_argument('--install-root', type=Path, default=ROOT / 'vcpkg' / 'installed', help="The install root for vcpkg.")
     parser.add_argument('--manifest-root', type=Path, default=ROOT / 'vcpkg', help="The directory containing Mixxx's vcpkg.json.")
     parser.add_argument('--graph', action=argparse.BooleanOptionalAction, default=False, help='Output the dependency graph.')
@@ -83,6 +84,7 @@ def main():
             '--recurse',
             *(['--dry-run'] if args.dry_run else []),
             *(['--clean-after-build'] if args.clean_after_build else []),
+            *(['--x-no-default-features', '--x-feature', 'qt5'] if args.qt5 else []),
         ]
         subprocess.run([str(vcpkg), 'install', *vcpkg_flags, *install_flags], check=True, cwd=manifest_root)
 
