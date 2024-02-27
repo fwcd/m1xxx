@@ -19,8 +19,8 @@ def main():
     parser.add_argument('--build-type', type=str, default='RelWithDebInfo', help='The CMake build type')
     parser.add_argument('--target', type=str, default=os.getenv('VCPKG_DEFAULT_TRIPLET', default_triplet), help='The target triplet to use.')
     parser.add_argument('--dry-run', action='store_true', help='Do not actually configure.')
-    parser.add_argument('--vcpkg-root', type=Path, default=ROOT / 'vcpkg', help='The vcpkg repository.')
-    parser.add_argument('--mixxx-root', type=Path, default=ROOT / 'mixxx', help='The mixxx repository.')
+    parser.add_argument('--vcpkg-root', metavar='ROOT', type=Path, default=ROOT / 'vcpkg', help='The vcpkg repository.')
+    parser.add_argument('--mixxx-root', metavar='ROOT', type=Path, default=ROOT / 'mixxx', help='The mixxx repository.')
     parser.add_argument('extra_cmake_args', nargs='*', help='Extra arguments to the cmake invocation.')
 
     args = parser.parse_args()
