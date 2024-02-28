@@ -138,7 +138,9 @@ jobs:
         )
         for daemon in "${daemons[@]}"; do
           sudo launchctl stop "$daemon"
+          echo "  -> $?"
           sudo launchctl disable "system/$daemon"
+          echo "  -> $?"
         done
 
     # TODO: Remove this workaround once CMake in GitHub's runner image is
