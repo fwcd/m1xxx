@@ -27,6 +27,9 @@ jobs:
           triplet: arm64-ios-release
           host_triplet: arm64-osx-release
           ccache_path: ~/Library/Caches/ccache
+          cmake_args: >-
+            -DCMAKE_XCODE_ATTRIBUTE_CODE_SIGNING_REQUIRED="NO"
+            -DCMAKE_XCODE_ATTRIBUTE_CODE_SIGN_IDENTITY=""
         # - name: macOS (arm64)
         #   os: macos-11
         #   suffix: ''
