@@ -1,7 +1,7 @@
 [submodule "vcpkg"]
 	path = vcpkg
-	url = https://github.com/mixxxdj/vcpkg.git
-	branch = 2.5
+	url = ../vcpkg.git
+	branch = mixxx/wasm
 [submodule "mixxx"]
 	path = mixxx
 	url = https://github.com/mixxxdj/mixxx.git
