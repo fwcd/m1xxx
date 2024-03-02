@@ -4,5 +4,5 @@
 	branch = mixxx/wasm
 [submodule "mixxx"]
 	path = mixxx
-	url = https://github.com/mixxxdj/mixxx.git
-	branch = main
+	url = ../mixxx.git
+	branch = wasm
