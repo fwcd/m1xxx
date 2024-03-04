@@ -38,6 +38,7 @@ def main():
         print('No target triplet!')
         sys.exit(1)
 
+    emscripten = '-emscripten' in target
     generator = args.generator or 'Ninja'
 
     print(f'Target triplet: {target}')
@@ -48,6 +49,11 @@ def main():
         '-B', str(mixxx_root / 'build'),
         '-D', f'CMAKE_BUILD_TYPE={build_type}',
         '-D', f"QT6={'OFF' if qt5 else 'ON'}",
+        *([
+            '-D', 'MUSICBRAINZ=OFF',
+            '-D', 'QTKEYCHAIN=OFF',
+            '-D', 'HID=OFF',
+        ] if emscripten else []),
         *extra_cmake_args,
     ]
     cmake_env = {
