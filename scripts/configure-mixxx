@@ -50,9 +50,12 @@ def main():
         '-D', f'CMAKE_BUILD_TYPE={build_type}',
         '-D', f"QT6={'OFF' if qt5 else 'ON'}",
         *([
-            '-D', 'MUSICBRAINZ=OFF',
-            '-D', 'QTKEYCHAIN=OFF',
+            '-D', 'BATTERY=OFF',
+            '-D', 'BROADCAST=OFF',
             '-D', 'HID=OFF',
+            '-D', 'MUSICBRAINZ=OFF',
+            '-D', 'PORTMIDI=OFF',
+            '-D', 'QTKEYCHAIN=OFF',
         ] if emscripten else []),
         *extra_cmake_args,
     ]
