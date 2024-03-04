@@ -52,6 +52,7 @@ def main():
         *([
             '-D', 'BATTERY=OFF',
             '-D', 'BROADCAST=OFF',
+            '-D', 'ENGINEPRIME=OFF',
             '-D', 'HID=OFF',
             '-D', 'MUSICBRAINZ=OFF',
             '-D', 'PORTMIDI=OFF',
