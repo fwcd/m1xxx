@@ -63,6 +63,38 @@ scripts/configure-mixxx
 scripts/build-mixxx
 ```
 
+## Building for Emscripten/WebAssembly (WIP)
+
+Make sure to have `emsdk` installed (e.g. to `/opt/emsdk`), added to the `PATH` and `EMSDK` set. [Instructions can be found here](https://emscripten.org/docs/getting_started/downloads.html).
+
+> [!WARNING]
+> Homebrew's `emscripten` uses a custom directory layout that vcpkg's triplet cannot auto-detect. Specifying `EMSDK` manually may work, but the recommended approach is to use the official `emsdk` builds.
+
+To build the dependencies, run:
+
+```sh
+scripts/bootstrap-vcpkg
+scripts/install-vcpkg-deps --target wasm32-emscripten-pthread-release
+```
+
+To build Mixxx, run:
+
+```sh
+scripts/configure-mixxx --target wasm32-emscripten-pthread-release
+scripts/build-mixxx
+```
+
+To run Mixxx locally, run:
+
+```sh
+emrun mixxx/build/mixxx.html
+```
+
+This should open a browser window with Mixxx.
+
+> [!TIP]
+> You can optionally pass `--browser` to use a non-default browser.
+
 ## Credits
 
 Thanks to [`daschuer`](https://github.com/daschuer) for the work involved in backporting the relevant Qt patches, parts of the CI workflows and assistance in building the dependencies!
