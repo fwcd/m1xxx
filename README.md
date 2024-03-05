@@ -93,7 +93,10 @@ emrun mixxx/build/mixxx.html
 This should open a browser window with Mixxx.
 
 > [!TIP]
-> You can optionally pass `--browser` to use a non-default browser.
+> For Chrome, get the [C/C++ DevTools Support](https://chromewebstore.google.com/detail/cc++-devtools-support-dwa/pdcpmagijalfljmkmjngeonclgbbannb) extension to debug the WASM binary at the source level using DWARF debug info. This will require a build with `-g`, i.e. a `CMAKE_BUILD_TYPE` of `RelWithDebInfo` (default) or `Debug`.
+
+> [!TIP]
+> You can optionally pass `--browser` to use a non-default browser. With `--browser-args` you can specify arguments such as `--auto-open-devtools-for-tabs` or `--remote-debugging-port` in Chrome.
 
 ## Credits
 
