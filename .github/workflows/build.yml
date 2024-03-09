@@ -121,6 +121,11 @@ jobs:
       run: |
         ${{ env.SCRIPTS_ROOT }}/install-macos-deps
         xcrun --show-sdk-version
+    - name: Install Emscripten SDK
+      if: startsWith(matrix.triplet, 'wasm32-') || startsWith(matrix.triplet, 'wasm64-')
+      uses: mymindstorm/setup-emsdk@v14
+      with:
+        version: '3.1.55'
 
     # Build dependencies
 
