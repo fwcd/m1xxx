@@ -183,7 +183,7 @@ jobs:
           ccache-${{ matrix.triplet }}-
     - name: Configure Mixxx build
       run: ${{ env.SCRIPTS_ROOT }}/configure-mixxx -- ${{ matrix.cmake_args }}
-      working-directory: mixxx
+      working-directory: ${{ env.MIXXX_ROOT }}
     - name: Upload Mixxx configuration logs
       if: always()
       uses: actions/upload-artifact@v3
@@ -192,7 +192,7 @@ jobs:
         path: ${{ env.MIXXX_ROOT }}/build/CMakeFiles/*.log
     - name: Build Mixxx
       run: ${{ env.SCRIPTS_ROOT }}/build-mixxx
-      working-directory: mixxx
+      working-directory: ${{ env.MIXXX_ROOT }}
     - name: Save build cache
       if: always()
       uses: actions/cache/save@v3
@@ -203,7 +203,7 @@ jobs:
     - name: Package Mixxx
       if: matrix.package_extension && matrix.cpack_generator
       run: cpack -G ${{ matrix.cpack_generator }} -V && mv *.${{ matrix.package_extension }} "mixxx-${{ env.mixxx_version }}-${{ matrix.triplet }}${{ matrix.suffix }}.${{ matrix.package_extension }}"
-      working-directory: mixxx/build
+      working-directory: ${{ env.MIXXX_ROOT }}/build
     - name: Upload packaged Mixxx binaries
       if: matrix.package_extension && matrix.cpack_generator
       uses: actions/upload-artifact@v3
