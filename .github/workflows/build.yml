@@ -232,8 +232,8 @@ jobs:
       with:
         path: ${{ env.MIXXX_ROOT }}/build/gh-pages
   
-  deploy:
-    if: env.TARGETING_WASM && github.ref == 'refs/heads/wasm' # TODO: Update to main once upstream supports Wasm fully
+  deploy-pages:
+    if: github.ref == 'refs/heads/wasm' # TODO: Update to main once upstream supports Wasm fully
     runs-on: ubuntu-latest
     needs: [build]
 
