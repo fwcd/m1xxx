@@ -223,14 +223,13 @@ jobs:
         path: ${{ env.MIXXX_ROOT }}/build/*.${{ matrix.package_extension }}
     - name: Prepare Mixxx (Wasm) for deployment to GitHub Pages
       if: env.TARGETING_WASM
-      run: mkdir gh-pages && mv mixxx.{data,js,wasm,worker.js} qtloader.js qtlogo.svg gh-pages && mv mixxx.html gh-pages/index.html
+      run: cp ${{ env.MIXXX_ROOT }}/build/{mixxx.{data,js,wasm,worker.js},qtloader.js,qtlogo.svg} gh-pages
       shell: bash
-      working-directory: ${{ env.MIXXX_ROOT }}/build
     - name: Upload Mixxx (Wasm) for deployment to GitHub Pages
       if: env.TARGETING_WASM
       uses: actions/upload-pages-artifact@v3
       with:
-        path: ${{ env.MIXXX_ROOT }}/build/gh-pages
+        path: ./gh-pages
   
   deploy-pages:
     if: github.ref == 'refs/heads/wasm' # TODO: Update to main once upstream supports Wasm fully
