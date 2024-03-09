@@ -20,72 +20,77 @@ jobs:
     strategy:
       matrix:
         include:
-        - name: macOS (arm64)
-          os: macos-11
-          suffix: ''
-          triplet: arm64-osx-min1100-release
-          host_triplet: x64-osx-min1015-release
-          ccache_path: ~/Library/Caches/ccache
-          cpack_generator: DragNDrop
-          package_extension: dmg
-          cmake_args: >-
-            -DMACOS_BUNDLE=ON
-        - name: macOS (x86_64)
-          os: macos-11
-          suffix: ''
-          triplet: x64-osx-min1015-release
-          host_triplet: x64-osx-min1015-release
-          ccache_path: ~/Library/Caches/ccache
-          cpack_generator: DragNDrop
-          package_extension: dmg
-          cmake_args: >-
-            -DMACOS_BUNDLE=ON
-        - name: macOS (arm64, Debug Assertions)
-          os: macos-11
-          suffix: '-debugasserts'
-          triplet: arm64-osx-min1100-release
-          host_triplet: x64-osx-min1015-release
-          ccache_path: ~/Library/Caches/ccache
-          cpack_generator: DragNDrop
-          package_extension: dmg
-          cmake_args: >-
-            -DDEBUG_ASSERTIONS_FATAL=ON
-            -DMACOS_BUNDLE=ON
-        - name: macOS (x86_64, Debug Assertions)
-          os: macos-11
-          suffix: '-debugasserts'
-          triplet: x64-osx-min1015-release
-          host_triplet: x64-osx-min1015-release
-          ccache_path: ~/Library/Caches/ccache
-          cpack_generator: DragNDrop
-          package_extension: dmg
-          cmake_args: >-
-            -DDEBUG_ASSERTIONS_FATAL=ON
-            -DMACOS_BUNDLE=ON
-        - name: Linux (x86_64)
+        - name: Emscripten (wasm32)
           os: ubuntu-latest
-          suffix: ''
-          triplet: x64-linux-release
+          triplet: wasm32-emscripten-pthread-release
           host_triplet: x64-linux-release
           ccache_path: ~/.ccache
-          cpack_generator: TGZ
-          package_extension: tar.gz
-          # On Linux we build without battery support since this pulls in a
-          # dependency on GLib which is tricky to get right in a static linking scenario.
-          # See https://github.com/fwcd/m1xxx/pull/48#issuecomment-1807378063
-          cmake_args: >-
-            -DBATTERY=OFF
-        - name: Linux (x86_64, Debug Assertions)
-          os: ubuntu-latest
-          suffix: '-debugasserts'
-          triplet: x64-linux-release
-          host_triplet: x64-linux-release
-          ccache_path: ~/.ccache
-          cpack_generator: TGZ
-          package_extension: tar.gz
-          cmake_args: >-
-            -DDEBUG_ASSERTIONS_FATAL=ON
-            -DBATTERY=OFF
+        # - name: macOS (arm64)
+        #   os: macos-11
+        #   suffix: ''
+        #   triplet: arm64-osx-min1100-release
+        #   host_triplet: x64-osx-min1015-release
+        #   ccache_path: ~/Library/Caches/ccache
+        #   cpack_generator: DragNDrop
+        #   package_extension: dmg
+        #   cmake_args: >-
+        #     -DMACOS_BUNDLE=ON
+        # - name: macOS (x86_64)
+        #   os: macos-11
+        #   suffix: ''
+        #   triplet: x64-osx-min1015-release
+        #   host_triplet: x64-osx-min1015-release
+        #   ccache_path: ~/Library/Caches/ccache
+        #   cpack_generator: DragNDrop
+        #   package_extension: dmg
+        #   cmake_args: >-
+        #     -DMACOS_BUNDLE=ON
+        # - name: macOS (arm64, Debug Assertions)
+        #   os: macos-11
+        #   suffix: '-debugasserts'
+        #   triplet: arm64-osx-min1100-release
+        #   host_triplet: x64-osx-min1015-release
+        #   ccache_path: ~/Library/Caches/ccache
+        #   cpack_generator: DragNDrop
+        #   package_extension: dmg
+        #   cmake_args: >-
+        #     -DDEBUG_ASSERTIONS_FATAL=ON
+        #     -DMACOS_BUNDLE=ON
+        # - name: macOS (x86_64, Debug Assertions)
+        #   os: macos-11
+        #   suffix: '-debugasserts'
+        #   triplet: x64-osx-min1015-release
+        #   host_triplet: x64-osx-min1015-release
+        #   ccache_path: ~/Library/Caches/ccache
+        #   cpack_generator: DragNDrop
+        #   package_extension: dmg
+        #   cmake_args: >-
+        #     -DDEBUG_ASSERTIONS_FATAL=ON
+        #     -DMACOS_BUNDLE=ON
+        # - name: Linux (x86_64)
+        #   os: ubuntu-latest
+        #   suffix: ''
+        #   triplet: x64-linux-release
+        #   host_triplet: x64-linux-release
+        #   ccache_path: ~/.ccache
+        #   cpack_generator: TGZ
+        #   package_extension: tar.gz
+        #   # On Linux we build without battery support since this pulls in a
+        #   # dependency on GLib which is tricky to get right in a static linking scenario.
+        #   # See https://github.com/fwcd/m1xxx/pull/48#issuecomment-1807378063
+        #   cmake_args: >-
+        #     -DBATTERY=OFF
+        # - name: Linux (x86_64, Debug Assertions)
+        #   os: ubuntu-latest
+        #   suffix: '-debugasserts'
+        #   triplet: x64-linux-release
+        #   host_triplet: x64-linux-release
+        #   ccache_path: ~/.ccache
+        #   cpack_generator: TGZ
+        #   package_extension: tar.gz
+        #   cmake_args: >-
+        #     -DDEBUG_ASSERTIONS_FATAL=ON
+        #     -DBATTERY=OFF
 
     name: '${{ matrix.name }}'
     runs-on: '${{ matrix.os }}'
@@ -201,9 +206,11 @@ jobs:
         path: ${{ matrix.ccache_path }}
         key: ccache-${{ matrix.triplet }}-${{ env.mixxx_commit }}-${{ github.ref }}-${{ github.run_number }}
     - name: Package Mixxx
+      if: matrix.package_extension && matrix.cpack_generator
       run: cpack -G ${{ matrix.cpack_generator }} -V && mv *.${{ matrix.package_extension }} "mixxx-${{ env.mixxx_version }}-${{ matrix.triplet }}${{ matrix.suffix }}.${{ matrix.package_extension }}"
       working-directory: mixxx/build
     - name: Upload packaged Mixxx binaries
+      if: matrix.package_extension && matrix.cpack_generator
       uses: actions/upload-artifact@v3
       with:
         name: ${{ env.ARTIFACT_BASE_NAME }}
