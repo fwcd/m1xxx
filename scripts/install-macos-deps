@@ -10,8 +10,10 @@ fi
 echo "==> Installing system dependencies with Homebrew..."
 brew install \
   automake \
+  autoconf \
   autoconf-archive \
   ccache \
+  libtool \
   nasm \
   ninja \
   pkg-config

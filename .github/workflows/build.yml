@@ -14,6 +14,7 @@ env:
   VCPKG_ROOT: '${{ github.workspace }}/vcpkg'
   MIXXX_ROOT: '${{ github.workspace }}/mixxx'
   SCRIPTS_ROOT: '${{ github.workspace }}/scripts'
+  XCODE_ROOT: /Applications/Xcode_15.2.app
 
 jobs:
   build:
@@ -21,30 +22,30 @@ jobs:
       matrix:
         include:
         - name: macOS (arm64)
-          os: macos-11
+          os: macos-14
           suffix: ''
           triplet: arm64-osx-min1100-release
-          host_triplet: x64-osx-min1015-release
+          host_triplet: arm64-osx-min1100-release
           ccache_path: ~/Library/Caches/ccache
           cpack_generator: DragNDrop
           package_extension: dmg
           cmake_args: >-
             -DMACOS_BUNDLE=ON
         - name: macOS (x86_64)
-          os: macos-11
+          os: macos-14
           suffix: ''
           triplet: x64-osx-min1015-release
-          host_triplet: x64-osx-min1015-release
+          host_triplet: arm64-osx-min1100-release
           ccache_path: ~/Library/Caches/ccache
           cpack_generator: DragNDrop
           package_extension: dmg
           cmake_args: >-
             -DMACOS_BUNDLE=ON
         - name: macOS (arm64, Debug Assertions)
-          os: macos-11
+          os: macos-14
           suffix: '-debugasserts'
           triplet: arm64-osx-min1100-release
-          host_triplet: x64-osx-min1015-release
+          host_triplet: arm64-osx-min1100-release
           ccache_path: ~/Library/Caches/ccache
           cpack_generator: DragNDrop
           package_extension: dmg
@@ -52,10 +53,10 @@ jobs:
             -DDEBUG_ASSERTIONS_FATAL=ON
             -DMACOS_BUNDLE=ON
         - name: macOS (x86_64, Debug Assertions)
-          os: macos-11
+          os: macos-14
           suffix: '-debugasserts'
           triplet: x64-osx-min1015-release
-          host_triplet: x64-osx-min1015-release
+          host_triplet: arm64-osx-min1100-release
           ccache_path: ~/Library/Caches/ccache
           cpack_generator: DragNDrop
           package_extension: dmg
@@ -100,6 +101,8 @@ jobs:
       with:
         fetch-depth: '0' # to compute the monotonic version correctly
         submodules: true
+    - name: Output runner info
+      run: uname -a
     - name: Fetch versions and paths
       run: |
         for mod in "${{ env.VCPKG_ROOT }}" "${{ env.MIXXX_ROOT }}"; do
@@ -115,6 +118,9 @@ jobs:
       if: runner.os == 'macOS'
       run: |
         ${{ env.SCRIPTS_ROOT }}/install-macos-deps
+        sudo xcode-select -s "${{ env.XCODE_ROOT }}"
+        echo "==> Build environment"
+        xcode-select -p
         xcrun --show-sdk-version
 
     # Build dependencies
