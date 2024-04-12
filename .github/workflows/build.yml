@@ -117,6 +117,18 @@ jobs:
         ${{ env.SCRIPTS_ROOT }}/install-macos-deps
         xcrun --show-sdk-version
 
+    # TODO: Remove this workaround once CMake in GitHub's runner image is
+    # updated to 3.29.2, i.e. the `PACKAGE_PREFIX_DIR` issue is fixed again (the
+    # breaking change was reverted). See
+    # - https://github.com/actions/runner-images/blob/main/images/ubuntu/Ubuntu2204-Readme.md (the image)
+    # - https://gitlab.kitware.com/cmake/cmake/-/commit/0e4db177647e29b5f4a99ec220e38b5dbbf01361 (the revert)
+    # - https://github.com/microsoft/vcpkg/pull/38088 (related discussion)
+    # - https://bugreports.qt.io/browse/QTBUG-124186 (related Qt bug)
+    - name: Pin CMake to 3.29.2
+      uses: jwlawson/actions-setup-cmake@v2
+      with:
+        cmake-version: '3.29.2'
+
     # Build dependencies
 
     - name: Bootstrap vcpkg
