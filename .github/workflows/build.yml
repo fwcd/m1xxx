@@ -137,7 +137,7 @@ jobs:
           com.apple.metadata.mds.index
         )
         for daemon in "${daemons[@]}"; do
-          sudo launchctl unload -w "$daemon"
+          sudo launchctl unload -w "system/$daemon"
           echo "  -> $?"
         done
 
