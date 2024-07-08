@@ -137,9 +137,7 @@ jobs:
           com.apple.metadata.mds.index
         )
         for daemon in "${daemons[@]}"; do
-          sudo launchctl stop "$daemon"
-          echo "  -> $?"
-          sudo launchctl disable "system/$daemon"
+          sudo launchctl unload -w "$daemon"
           echo "  -> $?"
         done
 
