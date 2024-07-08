@@ -227,8 +227,8 @@ jobs:
         # between hdiutil and CPack by killing XProtect. We should replace this
         # with a better solution once fixed upstream.
         # See https://github.com/actions/runner-images/issues/7522
-        while true; do sudo pkill -9 XProtect; sleep 0.2; done &
-        while pgrep XProtect; do sleep 0.5; done
+        echo Killing XProtect...; sudo pkill -9 XProtect >/dev/null || true;
+        echo Waiting for XProtect...; while pgrep XProtect; do sleep 3; done;
 
         cpack -G ${{ matrix.cpack_generator }} -V
         mv *.${{ matrix.package_extension }} \
