@@ -218,22 +218,26 @@ jobs:
         # TODO: Share the key with the setup step
         path: ${{ matrix.ccache_path }}
         key: ccache-${{ matrix.triplet }}-${{ env.mixxx_commit }}-${{ github.ref }}-${{ github.run_number }}
+    # Work around 'Resource busy' errors likely caused by a race condition
+    # between hdiutil and CPack by killing XProtect. Unfortunately this does
+    # not work reliably either, so we try a few times.
+    # We should replace this with a better solution once fixed upstream.
+    # See https://github.com/actions/runner-images/issues/7522
     - name: Package Mixxx
       if: matrix.package_extension && matrix.cpack_generator
-      run: |
-        set -e
-
-        # Work around 'Resource busy' errors likely caused by a race condition
-        # between hdiutil and CPack by killing XProtect. We should replace this
-        # with a better solution once fixed upstream.
-        # See https://github.com/actions/runner-images/issues/7522
-        echo Killing XProtect...; sudo pkill -9 XProtect >/dev/null || true;
-        echo Waiting for XProtect...; while pgrep XProtect; do sleep 3; done;
-
-        cpack -G ${{ matrix.cpack_generator }} -V
-        mv *.${{ matrix.package_extension }} \
-           "mixxx-${{ env.mixxx_version }}-${{ matrix.triplet }}${{ matrix.suffix }}.${{ matrix.package_extension }}"
-      working-directory: ${{ env.MIXXX_ROOT }}/build
+      uses: nick-fields/retry@v3
+      with:
+        timeout_minutes: 30
+        max_attempts: 8
+        retry_wait_seconds: 1
+        command: |
+          set -e
+          echo Killing XProtect...; sudo pkill -9 XProtect >/dev/null || true;
+          echo Waiting for XProtect...; while pgrep XProtect; do sleep 3; done;
+          cd "${{ env.MIXXX_ROOT }}/build"
+          cpack -G ${{ matrix.cpack_generator }} -V
+          mv *.${{ matrix.package_extension }} \
+             "mixxx-${{ env.mixxx_version }}-${{ matrix.triplet }}${{ matrix.suffix }}.${{ matrix.package_extension }}"
     - name: Upload packaged Mixxx binaries
       if: matrix.package_extension && matrix.cpack_generator
       uses: actions/upload-artifact@v3
