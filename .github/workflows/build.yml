@@ -140,7 +140,7 @@ jobs:
     - name: Bootstrap vcpkg
       run: ${{ env.SCRIPTS_ROOT }}/bootstrap-vcpkg
     - name: Set up vcpkg cache
-      uses: actions/cache@v3
+      uses: actions/cache@v4
       with:
         path: ${{ env.VCPKG_ROOT }}/installed
         # TODO: Include hashed list of installed packages in key?
@@ -156,12 +156,12 @@ jobs:
       run: ${{ env.SCRIPTS_ROOT }}/install-vcpkg-deps --clean-after-build
     - name: Upload vcpkg build logs
       if: always()
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
-        name: 'vcpkg-buildlogs-${{ matrix.triplet }}'
+        name: 'vcpkg-buildlogs-${{ matrix.triplet }}${{ matrix.suffix }}'
         path: ${{ env.VCPKG_ROOT }}/buildtrees/**/*.log
     - name: Save vcpkg cache
-      uses: actions/cache/save@v3
+      uses: actions/cache/save@v4
       with:
         # TODO: Share the key and the path with the previous step
         path: ${{ env.VCPKG_ROOT }}/installed
@@ -181,7 +181,7 @@ jobs:
         --output-dir="${{ env.VCPKG_ROOT }}"
     - name: Upload vcpkg archive
       if: matrix.suffix == ''
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: ${{ env.DEPS_BASE_NAME }}-${{ env.vcpkg_commit_short }}
         path: ${{ env.VCPKG_ROOT }}/${{ env.DEPS_BASE_NAME }}-${{ env.vcpkg_commit_short }}.zip
@@ -191,7 +191,7 @@ jobs:
     - name: Configure build cache size
       run: ccache -M 500M
     - name: Set up build cache
-      uses: actions/cache@v3
+      uses: actions/cache@v4
       with:
         path: ${{ matrix.ccache_path }}
         key: ccache-${{ matrix.triplet }}-${{ env.mixxx_commit }}-${{ github.ref }}-${{ github.run_number }}
@@ -204,7 +204,7 @@ jobs:
       working-directory: ${{ env.MIXXX_ROOT }}
     - name: Upload Mixxx configuration logs
       if: always()
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: configurelogs
         path: ${{ env.MIXXX_ROOT }}/build/CMakeFiles/*.log
@@ -213,7 +213,7 @@ jobs:
       working-directory: ${{ env.MIXXX_ROOT }}
     - name: Save build cache
       if: always()
-      uses: actions/cache/save@v3
+      uses: actions/cache/save@v4
       with:
         # TODO: Share the key with the setup step
         path: ${{ matrix.ccache_path }}
@@ -240,7 +240,7 @@ jobs:
              "mixxx-${{ env.mixxx_version }}-${{ matrix.triplet }}${{ matrix.suffix }}.${{ matrix.package_extension }}"
     - name: Upload packaged Mixxx binaries
       if: matrix.package_extension && matrix.cpack_generator
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: ${{ env.ARTIFACT_BASE_NAME }}
         path: ${{ env.MIXXX_ROOT }}/build/*.${{ matrix.package_extension }}
@@ -262,7 +262,7 @@ jobs:
       run: echo "mixxx_version=$(scripts/mixxx-version)" >> "$GITHUB_ENV"
       shell: bash
     - name: Download artifacts for all builds
-      uses: actions/download-artifact@v3
+      uses: actions/download-artifact@v4
       with:
         # TODO: Only download artifacts starting with 'mixxx-' to avoid needlessly downloading the dependency archives
         path: '${{ env.MIXXX_ROOT }}/build'
