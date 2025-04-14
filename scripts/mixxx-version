@@ -21,7 +21,7 @@ def main():
     # Read actual version
     with open(CMAKELISTS_PATH, 'r') as f:
         for line in f.readlines():
-            version = re.search(r'^\s*project\(.+VERSION\s+(.+)\)\s*$', line)
+            version = re.search(r'^\s*project\(\s*mixxx\s+VERSION\s+(\S+)', line)
             if version:
                 parts.append(version[1])
             if args.prerelease_suffix:
