@@ -22,30 +22,30 @@ jobs:
       matrix:
         include:
         - name: macOS (arm64)
-          os: macos-13
+          os: macos-14
           suffix: ''
           triplet: arm64-osx-min1100-release
-          host_triplet: x64-osx-min1100-release
+          host_triplet: arm64-osx-min1100-release
           ccache_path: ~/Library/Caches/ccache
           cpack_generator: DragNDrop
           package_extension: dmg
           cmake_args: >-
             -DMACOS_BUNDLE=ON
         - name: macOS (x86_64)
-          os: macos-13
+          os: macos-14
           suffix: ''
           triplet: x64-osx-min1100-release
-          host_triplet: x64-osx-min1100-release
+          host_triplet: arm64-osx-min1100-release
           ccache_path: ~/Library/Caches/ccache
           cpack_generator: DragNDrop
           package_extension: dmg
           cmake_args: >-
             -DMACOS_BUNDLE=ON
         - name: macOS (arm64, Debug Assertions)
-          os: macos-13
+          os: macos-14
           suffix: '-debugasserts'
           triplet: arm64-osx-min1100-release
-          host_triplet: x64-osx-min1100-release
+          host_triplet: arm64-osx-min1100-release
           ccache_path: ~/Library/Caches/ccache
           cpack_generator: DragNDrop
           package_extension: dmg
@@ -53,10 +53,10 @@ jobs:
             -DDEBUG_ASSERTIONS_FATAL=ON
             -DMACOS_BUNDLE=ON
         - name: macOS (x86_64, Debug Assertions)
-          os: macos-13
+          os: macos-14
           suffix: '-debugasserts'
           triplet: x64-osx-min1100-release
-          host_triplet: x64-osx-min1100-release
+          host_triplet: arm64-osx-min1100-release
           ccache_path: ~/Library/Caches/ccache
           cpack_generator: DragNDrop
           package_extension: dmg
